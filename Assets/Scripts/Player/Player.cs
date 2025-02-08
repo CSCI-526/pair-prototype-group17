@@ -1,0 +1,177 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
+using Unity.PlasticSCM.Editor.WebApi;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+public class Player : MonoBehaviour
+{
+    [Header("Movement")]
+    public float moveSpeed;
+    public float stopSpeed;
+    public float acceleration;
+    [SerializeField] private Vector2 rawSpeed;
+    public int facingDir { get; private set; } = 1;
+    public bool facingRight = true;
+
+    [Header("Jump")]
+    public float jumpSpeed;
+    public float jumpXSpeedMultiplier;
+    public int jumpCounter;
+    public int maxJumpsAllowed;
+
+    [Header("Roll")]
+    public float rollTimer;
+    public float rollCooldown;
+    public float rollSpeed;
+    public float rollDirection;
+    public float rollDuration; // use when no animation event allowed
+
+    [Header("Dash")]
+    public int dashCounter;
+    public float dashDirection;
+    public float dashSpeed;
+    public int maxDashesAllowed;
+    public float dashDuration; // use when no animation event allowed
+
+    [Header("WallSlide")]
+    public float wallSlideTimer;
+    public float wallSlideCoolDown;
+    public float wallSlideSpeed;
+    public float wallSlideMinDuration;
+
+    [Header("WallJump")]
+    public float wallJumpFreezeTimer;
+    public float wallJumpFreezeCoolDown;
+    public float wallJumpXSpeed;
+
+    [Header("Attack")]
+    public float attackTimer;
+    public float attackCoolDown;
+    public float attackJumpForce;
+    public float attackDuration; // use if no animation event allowed
+    public GameObject attackIndicator; // use if no animation event allowed
+
+    [Header("Collision")]
+    public Transform groundCheck;
+    public float grounCheckDistance;
+    public LayerMask whatIsGround;
+    public Transform wallCheckTop;
+    public Transform wallCheckBottom;
+    public float wallCheckDistance;
+    public LayerMask whatIsWall;
+
+    [Header("Animation")]
+    [SerializeField] private string animState;
+
+
+
+    #region Components
+
+    [Header("Components")]
+    public Animator anim;
+    public Animator animWeapon;
+    public Rigidbody2D rb { get; private set; }
+    #endregion
+
+
+    #region States
+    public PlayerStateMachine stateMachine { get; private set; }
+    public PlayerState idleState { get; private set; }
+    public PlayerState moveState { get; private set; }
+    public PlayerState jumpState { get; private set; }
+    public PlayerState airState { get; private set; }
+    public PlayerState rollState { get; private set; }
+    public PlayerState wallSlideState { get; private set; }
+    public PlayerState wallJumpState { get; private set; }
+    public PlayerState dashState { get; private set; }
+    public PlayerState attackState { get; private set; }
+    #endregion
+    private void Awake()
+    {
+        stateMachine = new PlayerStateMachine();
+
+        idleState = new PlayerIdleState(this, stateMachine, "Idle");
+        moveState = new PlayerMoveState(this, stateMachine, "Move");
+        jumpState = new PlayerJumpState(this, stateMachine, "Jump");
+        airState = new PlayerAirState(this, stateMachine, "Jump");
+        rollState = new PlayerRollState(this, stateMachine, "Roll");
+        wallSlideState = new PlayerWallSlideState(this, stateMachine, "WallSlide");
+        wallJumpState = new PlayerWallJumpState(this, stateMachine, "Jump");
+        dashState = new PlayerDashState(this, stateMachine, "Dash");
+        attackState = new PlayerAttackState(this, stateMachine, "Attack");
+    }
+
+    private void Start()
+    {
+        //anim = GetComponentInChildren<Animator>(); // set in inspector
+        rb = GetComponent<Rigidbody2D>();
+        stateMachine.Initialize(idleState);
+    }
+
+    private void Update()
+    {
+        rawSpeed = rb.velocity;
+        stateMachine.currentState.Update();
+
+        rollTimer -= Time.deltaTime;
+        wallSlideTimer -= Time.deltaTime;
+        attackTimer -= Time.deltaTime;
+
+        //if (rollTimer<0 && Input.GetKeyDown(KeyCode.L))
+        //{
+        //    rollTimer = rollCooldown;
+        //}
+    }
+
+    private void LateUpdate()
+    {
+        stateMachine.currentState.LateUpdate();
+    }
+
+    public void ChangeAnimationState(string newState)
+    {
+        if (animState == newState) return;
+        anim.Play(newState);
+        animState = newState;
+    }
+
+    public bool IsGroundDetected() => Physics2D.Raycast(groundCheck.position, Vector2.down, grounCheckDistance, whatIsGround);
+    public bool IsWallDetected(){
+       
+        bool topCheck = Physics2D.Raycast(wallCheckTop.position, Vector2.right * facingDir, wallCheckDistance, whatIsWall);
+        bool bottomCheck = Physics2D.Raycast(wallCheckBottom.position, Vector2.right * facingDir, wallCheckDistance, whatIsWall);
+        return topCheck && bottomCheck;
+    } 
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(groundCheck.position, new Vector3(groundCheck.position.x, groundCheck.position.y - grounCheckDistance));
+        Gizmos.DrawLine(wallCheckTop.position, new Vector3(wallCheckTop.position.x + wallCheckDistance * facingDir, wallCheckTop.position.y));
+        Gizmos.DrawLine(wallCheckBottom.position, new Vector3(wallCheckBottom.position.x + wallCheckDistance * facingDir, wallCheckBottom.position.y));
+    }
+
+    public void Flip()
+    {
+        facingDir = facingDir * -1;
+        facingRight = !facingRight;
+        transform.Rotate(0, 180, 0);
+    }
+
+    public void FlipController(float _x)
+    {
+        if (_x>0 && !facingRight)
+        {
+            Flip();
+        }else if (_x<0 && facingRight)
+        {
+            Flip();
+        }
+        else
+        {
+
+        }
+    }
+
+}
