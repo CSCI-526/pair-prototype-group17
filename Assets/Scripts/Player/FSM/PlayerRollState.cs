@@ -12,6 +12,8 @@ public class PlayerRollState : PlayerState
     {
         base.Enter();
         stateTimer = player.rollDuration;
+        player.invincibleTimer = player.rollInvicibleTimeWindow; // change once using animation event
+        player.invincibleTimer = player.rollDuration;            // change once using animation event
     }
 
     public override void Exit()

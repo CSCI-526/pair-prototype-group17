@@ -7,6 +7,10 @@ using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
+    [Header("Stats")]
+    public SpriteRenderer playerPrototypeSprite;
+    public float invincibleTimer;
+    
     [Header("Movement")]
     public float moveSpeed;
     public float stopSpeed;
@@ -20,6 +24,14 @@ public class Player : MonoBehaviour
     public float jumpXSpeedMultiplier;
     public int jumpCounter;
     public int maxJumpsAllowed;
+    public float jumpParryWindow;
+    public float jumpParryInivicibleTimeWindow;
+    public Vector2 jumpBoxCenterOffset;
+    public float jumpBoxWidth;
+    public float jumpBoxHeight;
+    public LayerMask canBeJumpParried;
+    public bool showJumpBox;
+
 
     [Header("Roll")]
     public float rollTimer;
@@ -27,6 +39,7 @@ public class Player : MonoBehaviour
     public float rollSpeed;
     public float rollDirection;
     public float rollDuration; // use when no animation event allowed
+    public float rollInvicibleTimeWindow;
 
     [Header("Dash")]
     public int dashCounter;
@@ -34,6 +47,7 @@ public class Player : MonoBehaviour
     public float dashSpeed;
     public int maxDashesAllowed;
     public float dashDuration; // use when no animation event allowed
+    public float dashInvicibleTimeWindow;
 
     [Header("WallSlide")]
     public float wallSlideTimer;
@@ -52,6 +66,12 @@ public class Player : MonoBehaviour
     public float attackJumpForce;
     public float attackDuration; // use if no animation event allowed
     public GameObject attackIndicator; // use if no animation event allowed
+    public Vector2 attackBoxCenterOffset;
+    public float attackBoxWidth;
+    public float attackBoxHeight;
+    public LayerMask attackBoxLayerMask;
+    public bool showAttackBox;
+    public float attackInvicibleTimeWindow;
 
     [Header("Collision")]
     public Transform groundCheck;
@@ -62,6 +82,7 @@ public class Player : MonoBehaviour
     public float wallCheckDistance;
     public LayerMask whatIsWall;
 
+    
     [Header("Animation")]
     [SerializeField] private string animState;
 
@@ -118,6 +139,15 @@ public class Player : MonoBehaviour
         rollTimer -= Time.deltaTime;
         wallSlideTimer -= Time.deltaTime;
         attackTimer -= Time.deltaTime;
+        invincibleTimer -= Time.deltaTime;
+        if (invincibleTimer > 0)
+        {
+            playerPrototypeSprite.color = Color.yellow;
+        }
+        else
+        {
+            playerPrototypeSprite.color = Color.gray;
+        }
 
         //if (rollTimer<0 && Input.GetKeyDown(KeyCode.L))
         //{
@@ -147,9 +177,13 @@ public class Player : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.DrawLine(groundCheck.position, new Vector3(groundCheck.position.x, groundCheck.position.y - grounCheckDistance));
+        Gizmos.DrawLine(groundCheck.position, new Vector3(groundCheck.position.x, groundCheck.position.y - grounCheckDistance)); 
         Gizmos.DrawLine(wallCheckTop.position, new Vector3(wallCheckTop.position.x + wallCheckDistance * facingDir, wallCheckTop.position.y));
         Gizmos.DrawLine(wallCheckBottom.position, new Vector3(wallCheckBottom.position.x + wallCheckDistance * facingDir, wallCheckBottom.position.y));
+        if(showJumpBox)
+            Gizmos.DrawWireCube((Vector2)transform.position + jumpBoxCenterOffset, new Vector3(jumpBoxWidth, jumpBoxHeight, 0));
+        if(showAttackBox)
+            Gizmos.DrawWireCube((Vector2)transform.position + attackBoxCenterOffset, new Vector3(attackBoxWidth, attackBoxHeight, 0));
     }
 
     public void Flip()

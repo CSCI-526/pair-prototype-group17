@@ -18,6 +18,8 @@ public class PlayerDashState : PlayerState
         base.Enter();
         player.dashCounter++;
         stateTimer = player.dashDuration;
+        player.invincibleTimer = player.dashInvicibleTimeWindow; // change once using animation event
+        player.invincibleTimer = player.dashDuration;            // change once using animation event
     }
 
     public override void Exit()

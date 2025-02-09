@@ -36,6 +36,8 @@ public class PlayerAttackState : PlayerState
             rb.velocity = new Vector2(rb.velocity.x, player.attackJumpForce);
         }
         stateTimer = player.attackDuration;
+        player.invincibleTimer = player.attackInvicibleTimeWindow; // change once using animation event
+        player.invincibleTimer = player.attackDuration;            // change once using animation event
     }
 
     public override void Exit()

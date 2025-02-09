@@ -11,8 +11,10 @@ public class PlayerJumpState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        stateTimer = player.jumpParryWindow;
         player.jumpCounter++;
         player.dashCounter = 0;
+        player.invincibleTimer = player.jumpParryWindow;
         rb.velocity = new Vector2(rb.velocity.x, player.jumpSpeed);
     }
 
@@ -24,6 +26,30 @@ public class PlayerJumpState : PlayerState
     public override void Update()
     {
         base.Update();
+        stateTimer -= Time.deltaTime;
+        if (stateTimer > 0)
+        {
+            Vector2 jumpBoxCenter = (Vector2)player.transform.position + player.jumpBoxCenterOffset;
+            Vector2 jumpBoxTopLeftCorner = jumpBoxCenter - new Vector2(player.jumpBoxWidth / 2, player.jumpBoxHeight / 2);
+            Vector2 jumpBoxBottomRightCorner = jumpBoxCenter + new Vector2(player.jumpBoxWidth / 2, player.jumpBoxHeight / 2);
+            Collider2D[] colliders = Physics2D.OverlapAreaAll(jumpBoxTopLeftCorner, jumpBoxBottomRightCorner,player.canBeJumpParried);
+            bool isParried = false;
+            foreach (var hit in colliders)
+            {
+                HomingMissile missile = hit.GetComponent<HomingMissile>();
+                if (missile!= null)
+                {
+                    missile.DisableMovement();
+                    isParried = true;
+                }
+            }
+            if (isParried)
+            {
+                player.invincibleTimer = player.jumpParryInivicibleTimeWindow;
+                rb.velocity = new Vector2(rb.velocity.x, player.jumpSpeed * 1.2f);
+                player.jumpCounter = 0;
+            }
+        }
         if (Input.GetKeyDown(KeyCode.J) && player.attackTimer < 0)
         {
             stateMachine.ChangeState(player.attackState);
