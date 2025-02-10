@@ -23,21 +23,23 @@ public class PlayerGroundedState : PlayerState
     {
         base.Update();
 
-        if (Input.GetKeyDown(KeyCode.J) && player.attackTimer < 0)
+        // state transition logic
+        if ((input.Attack||input.isAttackBuffered) && player.attackTimer < 0)
         {
             stateMachine.ChangeState(player.attackState);
             return;
         }
-        if (Input.GetKeyDown(KeyCode.Space) && player.IsGroundDetected())
+        if ((input.Jump || input.isJumpBuffered) && player.IsGroundDetected())
         {
             stateMachine.ChangeState(player.jumpState);
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.L) && player.IsGroundDetected() && player.rollTimer < 0)
+        if ((input.Roll|| input.isRollBuffered) && player.IsGroundDetected() && player.rollTimer < 0)
         {
-            player.rollDirection = Input.GetAxisRaw("Horizontal");
-            
+            player.rollDirection = input.Xinput;
+
+            // get most recent input direction when rolling
             if (player.rollDirection == 0)
             {
                 player.rollDirection = player.facingDir;

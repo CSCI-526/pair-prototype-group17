@@ -21,16 +21,17 @@ public class PlayerMoveState : PlayerGroundedState
     public override void Update()
     {
         base.Update();
-
-        float targetSpeed = xInput * player.moveSpeed;
+        
+        // game logic
+        float targetSpeed = input.Xinput * player.moveSpeed;
         float speedDifference = targetSpeed - rb.velocity.x;
         float frameSpeed;
-        if (xInput > 0)
+        if (input.Xinput > 0)
         {
            frameSpeed = rb.velocity.x + player.acceleration * Time.deltaTime;
            rb.velocity = new Vector2(Mathf.Clamp(frameSpeed, -player.moveSpeed, player.moveSpeed), rb.velocity.y);
         }
-        else if (xInput < 0) 
+        else if (input.Xinput < 0) 
         {
         
             frameSpeed = rb.velocity.x - player.acceleration * Time.deltaTime;
@@ -40,15 +41,12 @@ public class PlayerMoveState : PlayerGroundedState
         {
             rb.velocity = new Vector2(Mathf.Clamp(rb.velocity.x, -player.moveSpeed, player.moveSpeed), rb.velocity.y);
         }
-        
 
-        //float force = xInput * player.acceleration * rb.mass;
-        //rb.AddForce(new Vector2(force, 0), ForceMode2D.Force);
-        //rb.velocity = new Vector2(Mathf.Clamp(rb.velocity.x, -player.moveSpeed, player.moveSpeed), rb.velocity.y);
-       
+        // animation logic
         MoveStateCustomAnimationTransition();
 
-        if (Mathf.Abs(xInput) == 0 && Mathf.Abs(rb.velocity.x) < player.stopSpeed)
+        // state transition logic
+        if (Mathf.Abs(input.Xinput) == 0 && Mathf.Abs(rb.velocity.x) < player.stopSpeed)
         {
             rb.velocity = new Vector2(0, rb.velocity.y); // Stop completely if almost stopping
             stateMachine.ChangeState(player.idleState);
@@ -57,7 +55,7 @@ public class PlayerMoveState : PlayerGroundedState
 
     private void MoveStateCustomAnimationTransition()
     {
-        bool xInputCheck = xInput != 0;
+        bool xInputCheck = input.Xinput != 0;
         bool xspeedCheck = Mathf.Abs(rb.velocity.x) > 7.9f;
 
 

@@ -11,22 +11,28 @@ public class PlayerJumpState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        player.jumpBoxIndicator.SetActive(true);
         stateTimer = player.jumpParryWindow;
         player.jumpCounter++;
         player.dashCounter = 0;
         player.invincibleTimer = player.jumpParryWindow;
+        input.isJumpBuffered = false;
         rb.velocity = new Vector2(rb.velocity.x, player.jumpSpeed);
     }
 
     public override void Exit()
     {
+        player.jumpBoxIndicator.SetActive(false);
+        player.invincibleTimer = 0;
         base.Exit();
+
     }
 
     public override void Update()
     {
         base.Update();
-        stateTimer -= Time.deltaTime;
+        // game logic
+        // jump parry
         if (stateTimer > 0)
         {
             Vector2 jumpBoxCenter = (Vector2)player.transform.position + player.jumpBoxCenterOffset;
@@ -50,7 +56,13 @@ public class PlayerJumpState : PlayerState
                 player.jumpCounter = 0;
             }
         }
-        if (Input.GetKeyDown(KeyCode.J) && player.attackTimer < 0)
+        else 
+        { 
+            player.jumpBoxIndicator.SetActive(false); 
+        }
+
+        // state transition logic
+        if ((input.Attack || input.isAttackBuffered) && player.attackTimer < 0)
         {
             stateMachine.ChangeState(player.attackState);
             return;
@@ -60,18 +72,19 @@ public class PlayerJumpState : PlayerState
             stateMachine.ChangeState(player.airState);
             return;
         }
-        if (xInput != 0)
+        if (input.Xinput != 0)
         {
-            rb.velocity = new Vector2(player.moveSpeed * xInput * player.jumpXSpeedMultiplier, rb.velocity.y);
+            rb.velocity = new Vector2(player.moveSpeed * input.Xinput * player.jumpXSpeedMultiplier, rb.velocity.y);
         }
-        if (Input.GetKeyDown(KeyCode.Space) && player.jumpCounter < player.maxJumpsAllowed)
+        if ((input.Jump || input.isJumpBuffered) && player.jumpCounter < player.maxJumpsAllowed)
         {
             stateMachine.ChangeState(player.jumpState);
             return;
         }
-        if (Input.GetKeyDown(KeyCode.L) && player.dashCounter < player.maxDashesAllowed)
+        if ((input.Roll || input.isRollBuffered) && player.dashCounter < player.maxDashesAllowed)
         {
-            player.dashDirection = Input.GetAxisRaw("Horizontal");
+            // get most recent input direction when dashing
+            player.dashDirection = input.Xinput;
 
             if (player.dashDirection == 0)
             {

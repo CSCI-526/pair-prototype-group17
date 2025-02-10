@@ -11,7 +11,7 @@ public class PlayerWallJumpState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        
+        input.isJumpBuffered = false;
         player.jumpCounter++;
         rb.velocity = new Vector2(player.wallJumpXSpeed * -player.facingDir, player.jumpSpeed);
         player.wallJumpFreezeTimer = player.wallJumpFreezeCoolDown;
@@ -25,33 +25,35 @@ public class PlayerWallJumpState : PlayerState
     public override void Update()
     {
         base.Update();
+        // game logic
         player.wallJumpFreezeTimer -= Time.deltaTime;
-        
+        if (input.Xinput != 0 && player.wallJumpFreezeTimer < 0)
+        {
+            rb.velocity = new Vector2(player.moveSpeed * input.Xinput * player.jumpXSpeedMultiplier, rb.velocity.y);
+        }
+
+        // state transition logic
         if (rb.velocity.y < 0)
         {
             stateMachine.ChangeState(player.airState);
             return;
         }
-        if (Input.GetKeyDown(KeyCode.J) && player.wallJumpFreezeTimer < 0 && player.attackTimer < 0)
+        if ((input.Attack || input.isAttackBuffered) && player.wallJumpFreezeTimer < 0 && player.attackTimer < 0)
         {
             stateMachine.ChangeState(player.attackState);
             return;
         }
-
-        if (xInput != 0 && player.wallJumpFreezeTimer < 0)
-        {
-            rb.velocity = new Vector2(player.moveSpeed * xInput * player.jumpXSpeedMultiplier, rb.velocity.y);
-        }
-        if (Input.GetKeyDown(KeyCode.Space) && player.wallJumpFreezeTimer < 0)
+        
+        if ((input.Jump || input.isJumpBuffered) && player.wallJumpFreezeTimer < 0)
         {
             stateMachine.ChangeState(player.jumpState);
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.L) && player.dashCounter < player.maxDashesAllowed && player.wallJumpFreezeTimer < 0)
+        if ((input.Roll || input.isRollBuffered) && player.dashCounter < player.maxDashesAllowed && player.wallJumpFreezeTimer < 0)
         {
-            player.dashDirection = Input.GetAxisRaw("Horizontal");
-
+            player.dashDirection = input.Xinput;
+            // get most recent input direction when dashing
             if (player.dashDirection == 0)
             {
                 player.dashDirection = player.facingDir;
@@ -60,4 +62,5 @@ public class PlayerWallJumpState : PlayerState
             return;
         }
     }
+    
 }

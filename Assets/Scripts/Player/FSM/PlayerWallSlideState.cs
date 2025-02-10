@@ -19,17 +19,19 @@ public class PlayerWallSlideState : PlayerState
         player.wallSlideTimer = player.wallSlideCoolDown;
         player.jumpCounter = 0;
         player.dashCounter = 0;
+        stateTimer = 0;
         base.Exit();
         
     }
 
     public override void Update()
     {
+        // game logic
         stateTimer -= Time.deltaTime;
-        xInput = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(0, -player.wallSlideSpeed);
 
-        if (Input.GetKeyDown(KeyCode.J) && player.attackTimer < 0)
+        // state transition logic
+        if ((input.Attack || input.isAttackBuffered) && player.attackTimer < 0)
         {
             player.Flip();
             stateMachine.ChangeState(player.attackState);
@@ -38,13 +40,13 @@ public class PlayerWallSlideState : PlayerState
 
         if (stateTimer < 0){
             
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (input.Jump || input.isJumpBuffered)
             {
                 stateMachine.ChangeState(player.wallJumpState);
                 return;
             }
 
-            if ((xInput != 0 && player.facingDir != xInput) || !player.IsWallDetected())
+            if ((input.Xinput != 0 && player.facingDir * input.Xinput < 0) || !player.IsWallDetected())
             {
                 stateMachine.ChangeState(player.airState);
                 return;

@@ -7,6 +7,8 @@ using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
+    public PlayerInput input;
+
     [Header("Stats")]
     public SpriteRenderer playerPrototypeSprite;
     public float invincibleTimer;
@@ -26,6 +28,7 @@ public class Player : MonoBehaviour
     public int maxJumpsAllowed;
     public float jumpParryWindow;
     public float jumpParryInivicibleTimeWindow;
+    public GameObject jumpBoxIndicator;
     public Vector2 jumpBoxCenterOffset;
     public float jumpBoxWidth;
     public float jumpBoxHeight;
@@ -122,6 +125,8 @@ public class Player : MonoBehaviour
         wallJumpState = new PlayerWallJumpState(this, stateMachine, "Jump");
         dashState = new PlayerDashState(this, stateMachine, "Dash");
         attackState = new PlayerAttackState(this, stateMachine, "Attack");
+
+        input = GetComponent<PlayerInput>();
     }
 
     private void Start()
@@ -129,17 +134,35 @@ public class Player : MonoBehaviour
         //anim = GetComponentInChildren<Animator>(); // set in inspector
         rb = GetComponent<Rigidbody2D>();
         stateMachine.Initialize(idleState);
+        input.EnableGamePlayInputs();
     }
 
     private void Update()
     {
         rawSpeed = rb.velocity;
-        stateMachine.currentState.Update();
+        // set buffer before state update
+        if (input.Jump)
+        {
+            input.SetJumpBufferTimer();
+        }
+        if (input.Roll)
+        {
+            input.SetRollBufferTimer();
+        }
+        if (input.Attack)
+        {
+            input.SetAttackBufferTimer();
+        }
 
+        // global timers before state update
         rollTimer -= Time.deltaTime;
         wallSlideTimer -= Time.deltaTime;
         attackTimer -= Time.deltaTime;
         invincibleTimer -= Time.deltaTime;
+
+        // state update
+        stateMachine.currentState.Update();
+        
         if (invincibleTimer > 0)
         {
             playerPrototypeSprite.color = Color.yellow;
@@ -148,6 +171,8 @@ public class Player : MonoBehaviour
         {
             playerPrototypeSprite.color = Color.gray;
         }
+        
+        
 
         //if (rollTimer<0 && Input.GetKeyDown(KeyCode.L))
         //{
@@ -206,6 +231,13 @@ public class Player : MonoBehaviour
         {
 
         }
+    }
+
+    void OnGUI()
+    {
+        GUI.Label(new Rect(200, 200, 200, 200), "isJumpBuffered: " + input.isJumpBuffered);
+        GUI.Label(new Rect(200, 220, 200, 200), "isRollBuffered: " + input.isRollBuffered);
+        GUI.Label(new Rect(200, 240, 200, 200), "isAttackBuffered: " + input.isAttackBuffered);
     }
 
 }

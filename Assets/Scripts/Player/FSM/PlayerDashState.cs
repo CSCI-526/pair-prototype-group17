@@ -16,6 +16,7 @@ public class PlayerDashState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        input.isRollBuffered = false;
         player.dashCounter++;
         stateTimer = player.dashDuration;
         player.invincibleTimer = player.dashInvicibleTimeWindow; // change once using animation event
@@ -30,8 +31,11 @@ public class PlayerDashState : PlayerState
     public override void Update()
     {
         base.Update();
+        // game logic
         rb.velocity = new Vector2(player.dashSpeed * player.dashDirection, 0);
-        stateTimer -= Time.deltaTime;// remove once add animation
+
+        // state transition logic
+        // remove once add animation
         if (player.IsWallDetected() && !player.IsGroundDetected() && player.wallSlideTimer < 0)
         {
             stateMachine.ChangeState(player.wallSlideState);

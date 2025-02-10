@@ -21,8 +21,14 @@ public class PlayerAirState : PlayerState
     public override void Update()
     {
         base.Update();
+        // game logic
+        if (input.Xinput != 0)
+        {
+            rb.velocity = new Vector2(player.moveSpeed * input.Xinput, rb.velocity.y);
+        }
 
-        if (Input.GetKeyDown(KeyCode.J) && player.attackTimer < 0)
+        // state transition logic
+        if ((input.Attack || input.isAttackBuffered) && player.attackTimer < 0)
         {
             stateMachine.ChangeState(player.attackState);
             return;
@@ -32,25 +38,20 @@ public class PlayerAirState : PlayerState
             stateMachine.ChangeState(player.moveState);
             return;
         }
-
-        if (xInput != 0)
-        {
-            rb.velocity = new Vector2(player.moveSpeed * xInput, rb.velocity.y);
-        }
-
         if (player.IsWallDetected() && player.wallSlideTimer < 0)
         {
             stateMachine.ChangeState(player.wallSlideState);
             return;
         }
-        if (Input.GetKeyDown(KeyCode.Space) && player.jumpCounter < player.maxJumpsAllowed)
+        if ((input.Jump || input.isJumpBuffered) && player.jumpCounter < player.maxJumpsAllowed)
         {
             stateMachine.ChangeState(player.jumpState);
             return;
         }
-        if (Input.GetKeyDown(KeyCode.L) && player.dashCounter < player.maxDashesAllowed)
+        if ((input.Roll || input.isRollBuffered) && player.dashCounter < player.maxDashesAllowed)
         {
-            player.dashDirection = Input.GetAxisRaw("Horizontal");
+            // get most recent input direction when dashing
+            player.dashDirection = input.Xinput;
 
             if (player.dashDirection == 0)
             {

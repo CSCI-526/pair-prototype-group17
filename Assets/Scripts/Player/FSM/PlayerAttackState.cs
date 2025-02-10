@@ -24,6 +24,7 @@ public class PlayerAttackState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        input.isAttackBuffered = false;
         player.attackIndicator.SetActive(true);
         player.attackTimer = player.attackCoolDown;
         player.animWeapon.SetBool("BigSlash", true);
@@ -52,7 +53,6 @@ public class PlayerAttackState : PlayerState
     {
         base.Update();
         //rb.velocity = new Vector2(4*player.facingDir, rb.velocity.y * 0.6f);
-        stateTimer -= Time.deltaTime;
         if (rb.velocity.y < 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, 0);
