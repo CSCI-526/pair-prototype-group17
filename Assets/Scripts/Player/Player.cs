@@ -72,7 +72,8 @@ public class Player : MonoBehaviour
     public Vector2 attackBoxCenterOffset;
     public float attackBoxWidth;
     public float attackBoxHeight;
-    public LayerMask attackBoxLayerMask;
+    public LayerMask attackBoxLayerMask; // layer for enemy 
+    public LayerMask canBeAttackParried; // layer for deflectable projectile
     public bool showAttackBox;
     public float attackInvicibleTimeWindow;
 

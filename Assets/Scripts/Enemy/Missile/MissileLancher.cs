@@ -38,17 +38,19 @@ public class MissileLancher : MonoBehaviour
         {
             if (missile is HomingMissile homing)
             {
-                homing.isFunctioning = true;
+                
                 homing.target = target;
                 homing.moveSpeed = missileSpeed;
                 homing.turnSpeed = missileTurnSpeed;
                 homing.lifeTime = missileLifeTime;
+                homing.originator = gameObject;
             }
             else if (missile is LaserMissile laser)
             {
-                laser.isFunctioning = true;
+                laser.target = target;
                 laser.moveSpeed = missileSpeed;
                 laser.lifeTime = missileLifeTime;
+                laser.originator = gameObject;
             }
             
         }

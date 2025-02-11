@@ -53,6 +53,7 @@ public class PlayerAttackState : PlayerState
     {
         base.Update();
         //rb.velocity = new Vector2(4*player.facingDir, rb.velocity.y * 0.6f);
+        AttackParryCheck();
         if (rb.velocity.y < 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, 0);
@@ -67,5 +68,29 @@ public class PlayerAttackState : PlayerState
     {
         base.LateUpdate();
         //rb.velocity = new Vector2(rb.velocity.x*0.6f, rb.velocity.y * 0.6f);
+    }
+
+    private void AttackParryCheck()
+    {
+        Vector2 attackBoxCenter = (Vector2)player.transform.position + player.attackBoxCenterOffset;
+        Vector2 attackBoxTopLeftCorner = attackBoxCenter - new Vector2(player.attackBoxWidth / 2, player.attackBoxHeight / 2);
+        Vector2 attackBoxBottomRightCorner = attackBoxCenter + new Vector2(player.attackBoxWidth / 2, player.attackBoxHeight / 2);
+        Collider2D[] colliders = Physics2D.OverlapAreaAll(attackBoxTopLeftCorner, attackBoxBottomRightCorner, player.canBeAttackParried);
+        bool isParried = false;
+        foreach (var hit in colliders)
+        {
+            InteractableProjectile missile = hit.GetComponent<InteractableProjectile>();
+            if (missile != null)
+            {
+                missile.TrackBackOriginator();
+                isParried = true;
+            }
+        }
+        if (isParried)
+        {
+            
+            //rb.velocity = new Vector2(rb.velocity.x, player.jumpSpeed * 1.2f);
+            //player.jumpCounter = 0;
+        }
     }
 }

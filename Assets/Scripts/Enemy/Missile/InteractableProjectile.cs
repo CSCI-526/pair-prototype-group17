@@ -20,4 +20,9 @@ public class InteractableProjectile : MonoBehaviour
     {
 
     }
+
+    public virtual void TrackBackOriginator()
+    {
+
+    }
 }

@@ -35,26 +35,7 @@ public class PlayerJumpState : PlayerState
         // jump parry
         if (stateTimer > 0)
         {
-            Vector2 jumpBoxCenter = (Vector2)player.transform.position + player.jumpBoxCenterOffset;
-            Vector2 jumpBoxTopLeftCorner = jumpBoxCenter - new Vector2(player.jumpBoxWidth / 2, player.jumpBoxHeight / 2);
-            Vector2 jumpBoxBottomRightCorner = jumpBoxCenter + new Vector2(player.jumpBoxWidth / 2, player.jumpBoxHeight / 2);
-            Collider2D[] colliders = Physics2D.OverlapAreaAll(jumpBoxTopLeftCorner, jumpBoxBottomRightCorner,player.canBeJumpParried);
-            bool isParried = false;
-            foreach (var hit in colliders)
-            {
-                InteractableProjectile missile = hit.GetComponent<InteractableProjectile>();
-                if (missile!= null)
-                {
-                    missile.DisableMovement();
-                    isParried = true;
-                }
-            }
-            if (isParried)
-            {
-                player.invincibleTimer = player.jumpParryInivicibleTimeWindow;
-                rb.velocity = new Vector2(rb.velocity.x, player.jumpSpeed * 1.2f);
-                player.jumpCounter = 0;
-            }
+            JumpParryCheck();
         }
         else 
         { 
@@ -92,6 +73,30 @@ public class PlayerJumpState : PlayerState
             }
             stateMachine.ChangeState(player.dashState);
             return;
+        }
+    }
+
+    private void JumpParryCheck()
+    {
+        Vector2 jumpBoxCenter = (Vector2)player.transform.position + player.jumpBoxCenterOffset;
+        Vector2 jumpBoxTopLeftCorner = jumpBoxCenter - new Vector2(player.jumpBoxWidth / 2, player.jumpBoxHeight / 2);
+        Vector2 jumpBoxBottomRightCorner = jumpBoxCenter + new Vector2(player.jumpBoxWidth / 2, player.jumpBoxHeight / 2);
+        Collider2D[] colliders = Physics2D.OverlapAreaAll(jumpBoxTopLeftCorner, jumpBoxBottomRightCorner, player.canBeJumpParried);
+        bool isParried = false;
+        foreach (var hit in colliders)
+        {
+            InteractableProjectile missile = hit.GetComponent<InteractableProjectile>();
+            if (missile != null)
+            {
+                missile.DisableMovement();
+                isParried = true;
+            }
+        }
+        if (isParried)
+        {
+            player.invincibleTimer = player.jumpParryInivicibleTimeWindow;
+            rb.velocity = new Vector2(rb.velocity.x, player.jumpSpeed * 1.2f);
+            player.jumpCounter = 0;
         }
     }
 }
