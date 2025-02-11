@@ -162,7 +162,8 @@ public class Player : MonoBehaviour
 
         // state update
         stateMachine.currentState.Update();
-        
+
+        // debug info after state update
         if (invincibleTimer > 0)
         {
             playerPrototypeSprite.color = Color.yellow;
