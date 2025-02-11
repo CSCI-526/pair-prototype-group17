@@ -42,7 +42,7 @@ public class PlayerJumpState : PlayerState
             bool isParried = false;
             foreach (var hit in colliders)
             {
-                HomingMissile missile = hit.GetComponent<HomingMissile>();
+                InteractableProjectile missile = hit.GetComponent<InteractableProjectile>();
                 if (missile!= null)
                 {
                     missile.DisableMovement();

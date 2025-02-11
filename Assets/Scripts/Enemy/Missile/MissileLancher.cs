@@ -6,7 +6,7 @@ public class MissileLancher : MonoBehaviour
 {
     public GameObject missilePrefab;
     public float lauchInterval = 5f;
-    public float lauchTimer;
+    private float lauchTimer;
     public GameObject target;
     public float missileLifeTime = 5f;
     public float missileSpeed = 5f;
@@ -33,14 +33,24 @@ public class MissileLancher : MonoBehaviour
     {
         
         GameObject missileInstance = Instantiate(missilePrefab, transform.position, transform.rotation);
-        HomingMissile missile = missileInstance.GetComponent<HomingMissile>();
+        InteractableProjectile missile = missileInstance.GetComponent<InteractableProjectile>();
         if (missile != null)
         {
-            missile.isFunctioning = true;
-            missile.target = target;
-            missile.moveSpeed = missileSpeed;
-            missile.turnSpeed = missileTurnSpeed;
-            missile.lifeTime = missileLifeTime;
+            if (missile is HomingMissile homing)
+            {
+                homing.isFunctioning = true;
+                homing.target = target;
+                homing.moveSpeed = missileSpeed;
+                homing.turnSpeed = missileTurnSpeed;
+                homing.lifeTime = missileLifeTime;
+            }
+            else if (missile is LaserMissile laser)
+            {
+                laser.isFunctioning = true;
+                laser.moveSpeed = missileSpeed;
+                laser.lifeTime = missileLifeTime;
+            }
+            
         }
     }
 }
