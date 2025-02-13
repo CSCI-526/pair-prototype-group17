@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
-using Unity.PlasticSCM.Editor.WebApi;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -207,10 +206,30 @@ public class Player : MonoBehaviour
         Gizmos.DrawLine(groundCheck.position, new Vector3(groundCheck.position.x, groundCheck.position.y - grounCheckDistance)); 
         Gizmos.DrawLine(wallCheckTop.position, new Vector3(wallCheckTop.position.x + wallCheckDistance * facingDir, wallCheckTop.position.y));
         Gizmos.DrawLine(wallCheckBottom.position, new Vector3(wallCheckBottom.position.x + wallCheckDistance * facingDir, wallCheckBottom.position.y));
-        if(showJumpBox)
-            Gizmos.DrawWireCube((Vector2)transform.position + jumpBoxCenterOffset, new Vector3(jumpBoxWidth, jumpBoxHeight, 0));
-        if(showAttackBox)
-            Gizmos.DrawWireCube((Vector2)transform.position + attackBoxCenterOffset, new Vector3(attackBoxWidth, attackBoxHeight, 0));
+        if (showJumpBox)
+        {     
+            float boxCenterX = transform.position.x + jumpBoxCenterOffset.x;
+            float boxCenterY = transform.position.y + jumpBoxCenterOffset.y;
+            Gizmos.DrawWireCube(new Vector2(boxCenterX, boxCenterY), new Vector3(jumpBoxWidth, jumpBoxHeight, 0));
+          
+        }
+        if (showAttackBox)
+        {
+            if (facingRight)
+            {
+                float boxCenterX = transform.position.x + attackBoxCenterOffset.x;
+                float boxCenterY = transform.position.y + attackBoxCenterOffset.y;
+                Gizmos.DrawWireCube(new Vector2(boxCenterX, boxCenterY), new Vector3(attackBoxWidth, attackBoxHeight, 0));
+            }
+            else
+            {
+                float boxCenterX = transform.position.x - attackBoxCenterOffset.x;
+                float boxCenterY = transform.position.y + attackBoxCenterOffset.y;
+                Gizmos.DrawWireCube(new Vector2(boxCenterX, boxCenterY), new Vector3(attackBoxWidth, attackBoxHeight, 0));
+            }
+        }
+
+            //Gizmos.DrawWireCube((Vector2)transform.position + attackBoxCenterOffset, new Vector3(attackBoxWidth, attackBoxHeight,  0));
     }
 
     public void Flip()
@@ -237,9 +256,9 @@ public class Player : MonoBehaviour
 
     void OnGUI()
     {
-        GUI.Label(new Rect(200, 200, 200, 200), "isJumpBuffered: " + input.isJumpBuffered);
-        GUI.Label(new Rect(200, 220, 200, 200), "isRollBuffered: " + input.isRollBuffered);
-        GUI.Label(new Rect(200, 240, 200, 200), "isAttackBuffered: " + input.isAttackBuffered);
+        //GUI.Label(new Rect(200, 200, 200, 200), "isJumpBuffered: " + input.isJumpBuffered);
+        //GUI.Label(new Rect(200, 220, 200, 200), "isRollBuffered: " + input.isRollBuffered);
+        //GUI.Label(new Rect(200, 240, 200, 200), "isAttackBuffered: " + input.isAttackBuffered);
     }
 
 }

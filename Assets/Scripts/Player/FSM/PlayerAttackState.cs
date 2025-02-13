@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class PlayerAttackState : PlayerState
 {
@@ -72,9 +73,28 @@ public class PlayerAttackState : PlayerState
 
     private void AttackParryCheck()
     {
-        Vector2 attackBoxCenter = (Vector2)player.transform.position + player.attackBoxCenterOffset;
-        Vector2 attackBoxTopLeftCorner = attackBoxCenter - new Vector2(player.attackBoxWidth / 2, player.attackBoxHeight / 2);
-        Vector2 attackBoxBottomRightCorner = attackBoxCenter + new Vector2(player.attackBoxWidth / 2, player.attackBoxHeight / 2);
+        Vector2 attackBoxCenter;
+        Vector2 attackBoxTopLeftCorner;
+        Vector2 attackBoxBottomRightCorner;
+        float boxCenterX;
+        float boxCenterY;
+        if (player.facingRight)
+        {
+            boxCenterX = player.transform.position.x + player.attackBoxCenterOffset.x;
+            boxCenterY = player.transform.position.y + player.attackBoxCenterOffset.y;
+              
+        }
+        else
+        {
+            boxCenterX = player.transform.position.x - player.attackBoxCenterOffset.x;
+            boxCenterY = player.transform.position.y + player.attackBoxCenterOffset.y;
+            
+        }
+        attackBoxCenter = new Vector2(boxCenterX, boxCenterY);
+        attackBoxTopLeftCorner = attackBoxCenter - new Vector2(player.attackBoxWidth / 2, player.attackBoxHeight / 2);
+        attackBoxBottomRightCorner = attackBoxCenter + new Vector2(player.attackBoxWidth / 2, player.attackBoxHeight / 2);
+       
+
         Collider2D[] colliders = Physics2D.OverlapAreaAll(attackBoxTopLeftCorner, attackBoxBottomRightCorner, player.canBeAttackParried);
         bool isParried = false;
         foreach (var hit in colliders)

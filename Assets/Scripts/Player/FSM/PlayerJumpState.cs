@@ -12,7 +12,12 @@ public class PlayerJumpState : PlayerState
     {
         base.Enter();
         player.jumpBoxIndicator.SetActive(true);
-        stateTimer = player.jumpParryWindow;
+        if (! (stateMachine.previousState is PlayerGroundedState))
+        {
+            stateTimer = player.jumpParryWindow;
+        }
+            
+           
         player.jumpCounter++;
         player.dashCounter = 0;
         player.invincibleTimer = player.jumpParryWindow;

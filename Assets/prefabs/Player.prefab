@@ -271,7 +271,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 3
+  m_GravityScale: 4
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -347,6 +347,9 @@ MonoBehaviour:
   attackBoxLayerMask:
     serializedVersion: 2
     m_Bits: 0
+  canBeAttackParried:
+    serializedVersion: 2
+    m_Bits: 32768
   showAttackBox: 0
   attackInvicibleTimeWindow: 0
   groundCheck: {fileID: 5273977067956156465}

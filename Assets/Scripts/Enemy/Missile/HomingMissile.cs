@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Cinemachine;
 
 
 public class HomingMissile : InteractableProjectile
@@ -16,18 +17,21 @@ public class HomingMissile : InteractableProjectile
     public MissileState missileState;
     public float moveSpeed;
     public float turnSpeed;
+    public float onHitPauseDuration;
     public GameObject target;
     private Rigidbody2D rb;
     public float lifeTime;
     private float lifeTimer = 0f;
     private SpriteRenderer missileBodyRenderer;
     private SpriteRenderer missileTipRenderer;
+    private CinemachineImpulseSource impulseSource;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         missileBodyRenderer = GetComponent<SpriteRenderer>();
         missileTipRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        impulseSource = GetComponent<CinemachineImpulseSource>();
         missileState = MissileState.TrackingTarget;
         lifeTimer = lifeTime;
         rb.gravityScale = 0;
@@ -96,6 +100,8 @@ public class HomingMissile : InteractableProjectile
         }
         missileState = MissileState.DisFunctioned;
         rb.gravityScale = 1;
+        CameraShakeManager.instance.CameraShake(impulseSource);
+        //TimeManager.instance.PauseTime(onHitPauseDuration);
         //Destroy(gameObject, 1f);
     }
 
@@ -103,10 +109,10 @@ public class HomingMissile : InteractableProjectile
 
     public override void TrackBackOriginator()
     {
-        if (missileState == MissileState.TrackingBackOriginator)
+        if (missileState == MissileState.TrackingBackOriginator || missileState == MissileState.DisFunctioned)
         {
             return;
-        }
+        }   
         missileState = MissileState.TrackingBackOriginator;
         Vector3 targetDir = originator.transform.position - transform.position;
         if (Vector3.Dot(target.transform.right, targetDir) < 0)
@@ -117,6 +123,8 @@ public class HomingMissile : InteractableProjectile
         {
             transform.right = targetDir;
         }
+        CameraShakeManager.instance.CameraShake(impulseSource);
+        //TimeManager.instance.PauseTime(onHitPauseDuration);
     }
 
     private void SetColor(Color color)
