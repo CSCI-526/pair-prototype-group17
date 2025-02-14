@@ -332,8 +332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   missilePrefab: {fileID: 2854665775201114038, guid: 28591142fc7b9cb4fa47505736c82f32, type: 3}
-  lauchInterval: 5
-  lauchTimer: 0
+  lauchInterval: 2
   target: {fileID: 0}
   missileLifeTime: 5
   missileSpeed: 5
