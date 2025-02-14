@@ -112,5 +112,26 @@ public class PlayerAttackState : PlayerState
             //rb.velocity = new Vector2(rb.velocity.x, player.jumpSpeed * 1.2f);
             //player.jumpCounter = 0;
         }
+        colliders = Physics2D.OverlapAreaAll(attackBoxTopLeftCorner, attackBoxBottomRightCorner, player.canBeAttackParriedWeapon);
+        foreach (var hit in colliders)
+        {
+            WeaponController weapon = hit.GetComponent<WeaponController>();
+            if (weapon != null)
+            {
+                
+                //weapon.canDoDamage = false;
+                weapon.OnParry();
+                isParried = true;
+
+
+
+            }
+        }
+        if (isParried)
+        {
+
+            //rb.velocity = new Vector2(rb.velocity.x, player.jumpSpeed * 1.2f);
+            //player.jumpCounter = 0;
+        }
     }
 }

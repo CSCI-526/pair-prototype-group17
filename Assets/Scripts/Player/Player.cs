@@ -32,6 +32,7 @@ public class Player : MonoBehaviour
     public float jumpBoxWidth;
     public float jumpBoxHeight;
     public LayerMask canBeJumpParried;
+    public LayerMask canBeJumpParriedWeapon;
     public bool showJumpBox;
 
 
@@ -73,6 +74,7 @@ public class Player : MonoBehaviour
     public float attackBoxHeight;
     public LayerMask attackBoxLayerMask; // layer for enemy 
     public LayerMask canBeAttackParried; // layer for deflectable projectile
+    public LayerMask canBeAttackParriedWeapon; // layer for deflectable weapon
     public bool showAttackBox;
     public float attackInvicibleTimeWindow;
 
