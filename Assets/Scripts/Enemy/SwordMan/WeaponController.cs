@@ -21,7 +21,9 @@ public class WeaponController : MonoBehaviour
     public float turnSpeed = 130;
     public GameObject target;
     private WeaponState weaponState;
-    public GameObject originator;
+    public Enemy originator;
+    public bool trailEndInicator;
+    public int trailCounter;
     // Start is called before the first frame update
     void Awake()
     {
@@ -34,7 +36,7 @@ public class WeaponController : MonoBehaviour
         impulseSource = GetComponent<CinemachineImpulseSource>();
         weaponState = WeaponState.Idle;
         rb = GetComponent<Rigidbody2D>();
-        originator = GetComponentInParent<Enemy>().gameObject;
+        originator = GetComponentInParent<Enemy>();
     }
 
     // Update is called once per frame
@@ -90,6 +92,64 @@ public class WeaponController : MonoBehaviour
         {
             Debug.LogError("Index out of range for starting LerpTrail.");
         }
+    }
+
+    public void AttackTrailPermAOnEnter()
+    {
+        canDoDamage = true;
+        trailEndInicator = false;
+        trailCounter = 0;
+        StartLerpAtIndex(0);
+    }
+
+    public void AttackTrailPermAOnExit()
+    {
+        canDoDamage = false;
+    }
+    public void AttackTrailPermAOnUpdate()
+    {
+        
+        //trailEndInicator = false;
+        //trailCounter = 0;
+        
+        if (trailEndInicator)
+        {
+            
+            switch (trailCounter)
+            {
+                case 1:
+                    trailEndInicator = false;
+                    StartLerpAtIndex(1);
+                    break;
+                case 2:
+                    trailEndInicator = false;
+                    StartLerpAtIndex(2);
+                    break;
+                case 3:
+                    trailEndInicator = false;
+                    StartLerpAtIndex(3);
+                    break;
+                case 4:
+                    originator.attackOver = true;
+                    return;
+                default:
+                    return;
+            }
+        }
+        //if (enemy.attackOver && enemy.attackLerpCounter == enemy.maxAttackLerpCount - 2)
+        //{
+        //    enemy.weaponController.StartLerpAtIndex(2);
+        //    enemy.attackOver = false;
+        //}
+        //if (enemy.attackOver && enemy.attackLerpCounter == enemy.maxAttackLerpCount - 3)
+        //{
+        //    enemy.weaponController.StartLerpAtIndex(3);
+        //    enemy.attackOver = false;
+        //}
+        //if (enemy.attackOver && enemy.attackLerpCounter == enemy.maxAttackLerpCount - 4)
+        //{
+        //    stateMachine.ChangeState(enemy.idleState);
+        //}
     }
 
     public void SetColor(Color color)

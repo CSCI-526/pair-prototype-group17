@@ -16,6 +16,7 @@ public class LerpTrail : MonoBehaviour
     private Quaternion localStartRotation;
     private Quaternion localEndRotation;
     public Enemy enemy;
+    public WeaponController weaponController;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +28,7 @@ public class LerpTrail : MonoBehaviour
         }
         UpdateLocation();
         enemy = GetComponentInParent<Enemy>();
+        weaponController = GetComponentInParent<WeaponController>();
     }
 
     // Update is called once per frame
@@ -40,9 +42,12 @@ public class LerpTrail : MonoBehaviour
             {
                 t = 1.0f;
                 movingToEnd = false;
-                enemy.attackLerpCounter --;
-                enemy.attackOver = true;
-            }
+                //enemy.attackLerpCounter --;
+                //enemy.attackOver = true;
+                weaponController.trailEndInicator = true;
+                weaponController.trailCounter++;
+
+}
             transform.position = Vector3.Lerp(localStartPosition, localEndPosition, t);
             transform.rotation = Quaternion.Slerp(localStartRotation, localEndRotation, t);
         }

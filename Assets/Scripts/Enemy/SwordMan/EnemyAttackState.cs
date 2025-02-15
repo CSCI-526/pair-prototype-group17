@@ -12,15 +12,16 @@ public class EnemyAttackState : EnemyState
         base.Enter();
         enemy.attackOver = false;
         enemy.attackLerpCounter = enemy.maxAttackLerpCount;
-        enemy.weaponController.StartLerpAtIndex(0);
-        //enemy.anim.SetBool(animBoolName, true);
+        //enemy.weaponController.StartLerpAtIndex(0);
         enemy.rb.velocity = Vector2.zero;
-        enemy.weaponController.canDoDamage = true;
+        enemy.weaponController.AttackTrailPermAOnEnter();
+        
     }
     public override void Exit()
     {
+        enemy.weaponController.AttackTrailPermAOnExit();
         base.Exit();
-        enemy.weaponController.canDoDamage = false;
+        
         //enemy.anim.SetBool(animBoolName, false);
     }
     public override void Update()
@@ -33,23 +34,10 @@ public class EnemyAttackState : EnemyState
         //if (enemy.attackOver)
         //{
         //    stateMachine.ChangeState(enemy.idleState);
+        enemy.weaponController.AttackTrailPermAOnUpdate();
         //}
-        if (enemy.attackOver && enemy.attackLerpCounter == enemy.maxAttackLerpCount - 1)
-        {
-            enemy.weaponController.StartLerpAtIndex(1);
-            enemy.attackOver = false;
-        }
-        if (enemy.attackOver && enemy.attackLerpCounter == enemy.maxAttackLerpCount - 2)
-        {
-            enemy.weaponController.StartLerpAtIndex(2);
-            enemy.attackOver = false;
-        }
-        if (enemy.attackOver && enemy.attackLerpCounter == enemy.maxAttackLerpCount - 3)
-        {
-            enemy.weaponController.StartLerpAtIndex(3);
-            enemy.attackOver = false;
-        }
-        if (enemy.attackOver && enemy.attackLerpCounter == enemy.maxAttackLerpCount - 4)
+
+        if (enemy.attackOver)
         {
             stateMachine.ChangeState(enemy.idleState);
         }
