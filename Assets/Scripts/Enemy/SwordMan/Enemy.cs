@@ -6,7 +6,6 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     // Start is called before the first frame update
-    public LerpTrail lerpTrail;
     public Rigidbody2D rb { get; private set; }
 
     [Header("PlayerDetection")]
@@ -22,13 +21,12 @@ public class Enemy : MonoBehaviour
     public float moveSpeed;
 
     [Header("Attack")]
-    public WeaponController weaponController;
+    public Weapon weapon;
     public float attackRangeX;
     public float attackRangeY;
     public bool showAttackBox;
-    public int attackLerpCounter;
-    public int maxAttackLerpCount;
     public bool attackOver;
+    
 
     [Header("Collision")]
     public Transform groundCheck;
@@ -60,8 +58,8 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        weapon = GetComponentInChildren<Weapon>();
         stateMachine.Initialize(idleState);
-        weaponController = GetComponentInChildren<WeaponController>();
     }
 
     // Update is called once per frame
@@ -131,4 +129,37 @@ public class Enemy : MonoBehaviour
 
         }
     }
+
+    public void ForceMove(float speedMultiplier)
+    {
+        rb.velocity = new Vector2(moveSpeed * speedMultiplier * facingDir, rb.velocity.y);
+    }
+
+    public void ForceJump(float speedMultiplier)
+    {
+        rb.velocity = new Vector2(rb.velocity.x, moveSpeed*speedMultiplier);
+    }
+
+    public void checkFacingDir()
+    {
+        int playerDirection = player.transform.position.x > transform.position.x ? 1 : -1;
+        if (playerDirection != facingDir)
+        {
+            Flip();
+        }
+        return;
+    }
+
+    public (bool inRange, bool inAttackRange) PlayerInRange()
+    {
+        float distX = Mathf.Abs(player.transform.position.x - transform.position.x);
+        float distY = Mathf.Abs(player.transform.position.y - transform.position.y);
+
+
+
+        bool playerInRange = distX <= playerDetectionRangeX / 2 && distY <= playerDetectionRangeY / 2;
+        bool playerInAttackRange = distX <= attackRangeX / 2 && distY <= attackRangeY / 2;
+        return (playerInRange, playerInAttackRange);
+    }
+
 }

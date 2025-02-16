@@ -24,7 +24,7 @@ public class LerpTrail : MonoBehaviour
         {
             speed = 1 / duration;
         }else{
-            Debug.LogError("lerp duration must be greater than zero.");
+            //Debug.LogError("lerp duration must be greater than zero.");
         }
         UpdateLocation();
         enemy = GetComponentInParent<Enemy>();

@@ -16,12 +16,12 @@ public class TimeManager : MonoBehaviour
             instance = this;
         }
     }
-    public void PauseTime(float pauseDuration)
+    public void SlowTime(float pauseDuration, float scale)
     {   if (waiting)
         {
             return;
         }
-        Time.timeScale = 0.0f;
+        Time.timeScale = scale;
         StartCoroutine(Wait(pauseDuration));
     }
     IEnumerator Wait(float pauseDuration)

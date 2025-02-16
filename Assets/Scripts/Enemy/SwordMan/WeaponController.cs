@@ -265,7 +265,7 @@ public class WeaponController : MonoBehaviour
         {
             transform.up = targetDir;
         }
-        CameraShakeManager.instance.CameraShake(impulseSource);
+        //CameraShakeManager.instance.CameraShake(impulseSource);
         //TimeManager.instance.PauseTime(onHitPauseDuration);
     }
 

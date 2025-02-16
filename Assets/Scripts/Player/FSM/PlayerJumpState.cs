@@ -101,7 +101,7 @@ public class PlayerJumpState : PlayerState
         colliders = Physics2D.OverlapAreaAll(jumpBoxTopLeftCorner, jumpBoxBottomRightCorner, player.canBeJumpParriedWeapon);
         foreach (var hit in colliders)
         {
-            WeaponController weapon = hit.GetComponent<WeaponController>();
+            Weapon weapon = hit.GetComponent<Weapon>();
             if (weapon != null)
             {
                 weapon.OnJumpParry();

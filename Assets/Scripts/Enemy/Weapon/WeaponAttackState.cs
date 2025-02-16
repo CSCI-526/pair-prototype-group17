@@ -2,25 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyU1State : EnemyState
+public class WeaponAttackState : WeaponState
 {
-    public EnemyU1State(Enemy _enemy, EnemyStateMachine _stateMachine, string animBoolName) : base(_enemy, _stateMachine, animBoolName)
+    public WeaponAttackState(Weapon _weapon, WeaponStateMachine _stateMachine) : base(_weapon, _stateMachine)
     {
     }
-
     public override void Enter()
     {
         base.Enter();
         
     }
-
     public override void Exit()
     {
         base.Exit();
     }
-
+    public override void LateUpdate()
+    {
+        base.LateUpdate();
+    }
     public override void Update()
     {
+        
         base.Update();
+        
     }
 }
+

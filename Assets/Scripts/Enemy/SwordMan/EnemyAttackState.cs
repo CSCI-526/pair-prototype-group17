@@ -11,38 +11,29 @@ public class EnemyAttackState : EnemyState
     {
         base.Enter();
         enemy.attackOver = false;
-        enemy.attackLerpCounter = enemy.maxAttackLerpCount;
-        //enemy.weaponController.StartLerpAtIndex(0);
         enemy.rb.velocity = Vector2.zero;
-        enemy.weaponController.AttackTrailPermAOnEnter();
+        enemy.weapon.StartAttack1();
         
+
     }
     public override void Exit()
     {
-        enemy.weaponController.AttackTrailPermAOnExit();
+       
         base.Exit();
         
-        //enemy.anim.SetBool(animBoolName, false);
+        
     }
     public override void Update()
     {
         base.Update();
-        //if (stateTimer <= 0)
-        //{
-        //    stateMachine.ChangeState(enemy.idleState);
-        //}
-        //if (enemy.attackOver)
-        //{
-        //    stateMachine.ChangeState(enemy.idleState);
-        enemy.weaponController.AttackTrailPermAOnUpdate();
-        //}
+       
 
         if (enemy.attackOver)
         {
             stateMachine.ChangeState(enemy.idleState);
         }
 
-        Debug.Log("Attack");
+        //Debug.Log("Attack");
     }
 }
 

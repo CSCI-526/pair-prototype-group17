@@ -11,19 +11,16 @@ public class EnemyIdleState : EnemyState
     public override void Enter()
     {
         base.Enter();
-        //enemy.anim.SetBool("isMoving", false);
         stateTimer = 1f;
     }
     public override void Exit()
     {
         base.Exit();
-        //enemy.anim.SetBool("isMoving", true);
     }
     public override void Update()
     {
         base.Update();
-        //enemy.Move();
-        Debug.Log("Idle");
+        //Debug.Log("Idle");
         rb.velocity = new Vector2(0, rb.velocity.y);
         if (stateTimer < 0)
         {

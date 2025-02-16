@@ -52,7 +52,9 @@ public class PlayerAttackState : PlayerState
 
     public override void Update()
     {
-        base.Update();
+        //base.Update();
+        // knock back conflict with flip controller so we do no use the inherited update
+        stateTimer -= Time.deltaTime;
         //rb.velocity = new Vector2(4*player.facingDir, rb.velocity.y * 0.6f);
         AttackParryCheck();
         if (rb.velocity.y < 0)
@@ -106,16 +108,11 @@ public class PlayerAttackState : PlayerState
                 isParried = true;
             }
         }
-        if (isParried)
-        {
-            
-            //rb.velocity = new Vector2(rb.velocity.x, player.jumpSpeed * 1.2f);
-            //player.jumpCounter = 0;
-        }
+        
         colliders = Physics2D.OverlapAreaAll(attackBoxTopLeftCorner, attackBoxBottomRightCorner, player.canBeAttackParriedWeapon);
         foreach (var hit in colliders)
         {
-            WeaponController weapon = hit.GetComponent<WeaponController>();
+            Weapon weapon = hit.GetComponent<Weapon>();
             if (weapon != null)
             {
                 
@@ -130,7 +127,7 @@ public class PlayerAttackState : PlayerState
         if (isParried)
         {
 
-            //rb.velocity = new Vector2(rb.velocity.x, player.jumpSpeed * 1.2f);
+            rb.velocity = new Vector2(-player.facingDir*player.knockBackForce, rb.velocity.y);
             //player.jumpCounter = 0;
         }
     }
