@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     [Header("Stats")]
     public SpriteRenderer playerPrototypeSprite;
     public float invincibleTimer;
+    public int frameRate = 60;
     
     [Header("Movement")]
     public float moveSpeed;
@@ -19,6 +20,7 @@ public class Player : MonoBehaviour
     [SerializeField] private Vector2 rawSpeed;
     public int facingDir { get; private set; } = 1;
     public bool facingRight = true;
+    public float knockBackForce;
 
     [Header("Jump")]
     public float jumpSpeed;
@@ -32,6 +34,7 @@ public class Player : MonoBehaviour
     public float jumpBoxWidth;
     public float jumpBoxHeight;
     public LayerMask canBeJumpParried;
+    public LayerMask canBeJumpParriedWeapon;
     public bool showJumpBox;
 
 
@@ -73,6 +76,7 @@ public class Player : MonoBehaviour
     public float attackBoxHeight;
     public LayerMask attackBoxLayerMask; // layer for enemy 
     public LayerMask canBeAttackParried; // layer for deflectable projectile
+    public LayerMask canBeAttackParriedWeapon; // layer for deflectable weapon
     public bool showAttackBox;
     public float attackInvicibleTimeWindow;
 
@@ -132,6 +136,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         //anim = GetComponentInChildren<Animator>(); // set in inspector
+        Application.targetFrameRate = frameRate;
         rb = GetComponent<Rigidbody2D>();
         stateMachine.Initialize(idleState);
         input.EnableGamePlayInputs();

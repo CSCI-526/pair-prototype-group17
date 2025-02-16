@@ -97,6 +97,17 @@ public class PlayerJumpState : PlayerState
                 isParried = true;
             }
         }
+
+        colliders = Physics2D.OverlapAreaAll(jumpBoxTopLeftCorner, jumpBoxBottomRightCorner, player.canBeJumpParriedWeapon);
+        foreach (var hit in colliders)
+        {
+            Weapon weapon = hit.GetComponent<Weapon>();
+            if (weapon != null)
+            {
+                weapon.OnJumpParry();
+                isParried = true;
+            }
+        }
         if (isParried)
         {
             player.invincibleTimer = player.jumpParryInivicibleTimeWindow;

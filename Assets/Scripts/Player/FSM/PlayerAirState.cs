@@ -22,6 +22,7 @@ public class PlayerAirState : PlayerState
     {
         base.Update();
         // game logic
+        //player.FlipController(input.Xinput);
         if (input.Xinput != 0)
         {
             rb.velocity = new Vector2(player.moveSpeed * input.Xinput, rb.velocity.y);
