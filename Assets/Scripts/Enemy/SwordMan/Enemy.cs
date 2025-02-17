@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -10,6 +9,7 @@ public class Enemy : MonoBehaviour
 
     [Header("PlayerDetection")]
     public GameObject player;
+    public SpriteRenderer enemyPrototypeSprite;
     public float playerDetectionRangeX;
     public float playerDetectionRangeY;
     public bool showDetectionBox;
@@ -160,6 +160,11 @@ public class Enemy : MonoBehaviour
         bool playerInRange = distX <= playerDetectionRangeX / 2 && distY <= playerDetectionRangeY / 2;
         bool playerInAttackRange = distX <= attackRangeX / 2 && distY <= attackRangeY / 2;
         return (playerInRange, playerInAttackRange);
+    }
+
+    public void OnDamage()
+    {
+        Debug.Log("Enemy hit");
     }
 
 }

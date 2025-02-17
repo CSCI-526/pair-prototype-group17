@@ -151,6 +151,7 @@ public class Weapon : MonoBehaviour
         if (canDoDamage)
         {
             Player player = other.gameObject.GetComponent<Player>();
+            Enemy enemy = other.gameObject.GetComponent<Enemy>();
             if (player != null)
             {
                 if (player.OnDamage())
@@ -158,6 +159,11 @@ public class Weapon : MonoBehaviour
                     player.OnHit(transform,8, true);
                 }
             }
+            if (enemy != null)
+            {
+                enemy.OnDamage();
+            }
+
         }
     }
 
