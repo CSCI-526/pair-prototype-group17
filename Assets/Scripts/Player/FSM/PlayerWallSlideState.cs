@@ -30,6 +30,12 @@ public class PlayerWallSlideState : PlayerState
         stateTimer -= Time.deltaTime;
         rb.velocity = new Vector2(0, -player.wallSlideSpeed);
 
+        if (player.isDamaged)
+        {
+            rb.velocity = new Vector2(-player.facingDir * player.moveSpeed, rb.velocity.y);
+            stateMachine.ChangeState(player.onDamageState);
+            return;
+        }
         // state transition logic
         if ((input.Attack || input.isAttackBuffered) && player.attackTimer < 0)
         {

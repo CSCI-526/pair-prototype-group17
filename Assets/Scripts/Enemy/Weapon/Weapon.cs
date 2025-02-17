@@ -15,8 +15,11 @@ public class Weapon : MonoBehaviour
     public Vector3 InitialRotation = new Vector3(0,0,0);
     public int hitCounter;
     public bool canDoDamage;
+    public bool canBeParried;
     public float moveSpeed;
     public float turnSpeed;
+    public Collider2D cldr;
+    public LayerMask attackDetectionLayer;
 
     [Header("Attack")]
     public bool curveDoneSwitch;
@@ -60,6 +63,7 @@ public class Weapon : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        cldr = GetComponent<Collider2D>();
         if (enemy == null)
         {
             enemy = GetComponentInParent<Enemy>();
@@ -67,6 +71,7 @@ public class Weapon : MonoBehaviour
         a1Switch = false;
         impulseSource = GetComponent<CinemachineImpulseSource>();
         canDoDamage = false;
+        canBeParried = false;
         //// important!!! put initialize in last line of start if the first state Enter() uses any pointer that is done in start.
         stateMachine.Initialize(idleState);
         
@@ -138,6 +143,21 @@ public class Weapon : MonoBehaviour
             transform.up = targetDir;
         }
         
+    }
+
+    public void OnTriggerEnter2D(Collider2D other)
+    {
+        if (canDoDamage)
+        {
+            Player player = other.gameObject.GetComponent<Player>();
+            if (player != null)
+            {
+                if (player.OnDamage())
+                {
+                    player.OnHit(transform,8, true);
+                }
+            }
+        }
     }
 
 

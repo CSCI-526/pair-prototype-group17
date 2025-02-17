@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -20,7 +21,6 @@ public class Player : MonoBehaviour
     [SerializeField] private Vector2 rawSpeed;
     public int facingDir { get; private set; } = 1;
     public bool facingRight = true;
-    public float knockBackForce;
 
     [Header("Jump")]
     public float jumpSpeed;
@@ -80,6 +80,12 @@ public class Player : MonoBehaviour
     public bool showAttackBox;
     public float attackInvicibleTimeWindow;
 
+    [Header("OnDamage")]
+    public Vector2 knockBackForce; // this should be set using OnDamage function, direction is the same as knock force.
+    public bool isDamaged;
+    public CinemachineImpulseSource impulseSource;
+    public float OnDamageCoolDown;
+
     [Header("Collision")]
     public Transform groundCheck;
     public float grounCheckDistance;
@@ -115,6 +121,7 @@ public class Player : MonoBehaviour
     public PlayerState wallJumpState { get; private set; }
     public PlayerState dashState { get; private set; }
     public PlayerState attackState { get; private set; }
+    public PlayerState onDamageState { get; private set; }
     #endregion
     private void Awake()
     {
@@ -129,6 +136,7 @@ public class Player : MonoBehaviour
         wallJumpState = new PlayerWallJumpState(this, stateMachine, "Jump");
         dashState = new PlayerDashState(this, stateMachine, "Dash");
         attackState = new PlayerAttackState(this, stateMachine, "Attack");
+        onDamageState = new PlayerOnDamageState(this, stateMachine, "OnDamage");
 
         input = GetComponent<PlayerInput>();
     }
@@ -138,8 +146,12 @@ public class Player : MonoBehaviour
         //anim = GetComponentInChildren<Animator>(); // set in inspector
         Application.targetFrameRate = frameRate;
         rb = GetComponent<Rigidbody2D>();
-        stateMachine.Initialize(idleState);
+        isDamaged = false;
         input.EnableGamePlayInputs();
+        impulseSource = GetComponent<CinemachineImpulseSource>();
+        stateMachine.Initialize(idleState);
+       
+        
     }
 
     private void Update()
@@ -175,7 +187,15 @@ public class Player : MonoBehaviour
         }
         else
         {
-            playerPrototypeSprite.color = Color.gray;
+            if (isDamaged)
+            {
+                playerPrototypeSprite.color = Color.red;
+            }
+            else
+            {
+                playerPrototypeSprite.color = Color.gray;
+
+            }
         }
         
         
@@ -264,6 +284,32 @@ public class Player : MonoBehaviour
         //GUI.Label(new Rect(200, 200, 200, 200), "isJumpBuffered: " + input.isJumpBuffered);
         //GUI.Label(new Rect(200, 220, 200, 200), "isRollBuffered: " + input.isRollBuffered);
         //GUI.Label(new Rect(200, 240, 200, 200), "isAttackBuffered: " + input.isAttackBuffered);
+    }
+
+    public void OnHit(Transform targetTransform, float magnitude, bool fixVertical)
+    {
+        Vector2 dir;
+        if (fixVertical)
+        {
+            float xdist = targetTransform.position.x > transform.position.x ? -1 : 1;
+            dir = new Vector2(xdist, 0);
+        }
+        else
+        {
+            dir = (targetTransform.position - transform.position).normalized;
+            
+        }
+        knockBackForce = dir * magnitude;
+    }
+
+    public bool OnDamage()
+    {
+        if (!isDamaged && invincibleTimer<0)
+        {
+            isDamaged = true;
+            return true;
+        }
+        return false;
     }
 
 }

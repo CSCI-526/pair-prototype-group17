@@ -15,6 +15,7 @@ public class WeaponTrackState : WeaponState
         base.Enter();
         trigger = true;
         weapon.canDoDamage = true;
+        weapon.canBeParried = true;
         weapon.transform.up = Vector2.right * weapon.enemy.facingDir;
         //weapon.enemy.ForceJump(4f);
         //stateTimer = 1f;
@@ -41,12 +42,13 @@ public class WeaponTrackState : WeaponState
     }
     public override void OnParry()
     {
-        if (weapon.canDoDamage)
+        if (weapon.canBeParried)
         {
             CameraShakeManager.instance.CameraShake(weapon.impulseSource);
             TimeManager.instance.SlowTime(0.07f, 0.1f);
             stateMachine.ChangeState(weapon.trackBackState);
             weapon.canDoDamage = false;
+            weapon.canBeParried = false;
         }
             
     }

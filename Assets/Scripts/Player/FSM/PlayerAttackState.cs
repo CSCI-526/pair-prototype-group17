@@ -118,6 +118,7 @@ public class PlayerAttackState : PlayerState
                 
                 //weapon.canDoDamage = false;
                 weapon.OnParry();
+                player.OnHit(weapon.enemy.transform, 4, true);
                 isParried = true;
 
 
@@ -127,7 +128,15 @@ public class PlayerAttackState : PlayerState
         if (isParried)
         {
 
-            rb.velocity = new Vector2(-player.facingDir*player.knockBackForce, rb.velocity.y);
+            if (player.knockBackForce.y == 0)
+            {
+
+                rb.velocity = new Vector2(player.knockBackForce.x, rb.velocity.y);
+            }
+            else
+            {
+                rb.velocity = new Vector2(player.knockBackForce.x, player.knockBackForce.y);
+            }
             //player.jumpCounter = 0;
         }
     }

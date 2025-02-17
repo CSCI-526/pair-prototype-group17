@@ -53,7 +53,7 @@ public class WeaponState
 
     public virtual void OnParry()
     {
-        if (weapon.canDoDamage)
+        if (weapon.canBeParried)
         {
             CameraShakeManager.instance.CameraShake(weapon.impulseSource);
             TimeManager.instance.SlowTime(0.07f, 0.1f);
@@ -62,15 +62,17 @@ public class WeaponState
                 weapon.hitCounter++;
             }
             weapon.canDoDamage = false;
+            weapon.canBeParried = false;
         }
     }
     public virtual void OnJumpParry()
     {
-        if (weapon.canDoDamage)
+        if (weapon.canBeParried)
         {
             CameraShakeManager.instance.CameraShake(weapon.impulseSource);
             TimeManager.instance.SlowTime(0.07f, 0.1f);
             weapon.canDoDamage = false;
+            weapon.canBeParried = false;
         }
     }
 }

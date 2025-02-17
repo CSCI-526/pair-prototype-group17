@@ -26,5 +26,6 @@ public class EnemyIdleState : EnemyState
         {
             stateMachine.ChangeState(enemy.moveState);
         }
+        
     }
 }

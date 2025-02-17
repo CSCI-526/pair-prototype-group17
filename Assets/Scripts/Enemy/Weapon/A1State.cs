@@ -15,13 +15,15 @@ public class A1State : WeaponState
         weapon.curveDoneSwitch = false;
         pauseTimerStarted = false;
         weapon.canDoDamage = true;
+        weapon.canBeParried = true;
         weapon.enemy.ForceMove(2f);
         weapon.a1Curve.StartMove();
         
     }
     public override void Exit()
     {
-        weapon.canDoDamage = false;
+        
+        
         base.Exit();
     }
     public override void Update()
@@ -32,9 +34,31 @@ public class A1State : WeaponState
             weapon.curveDoneSwitch = false;
             stateTimer = pauseTime;
             pauseTimerStarted = true;
+            weapon.canDoDamage = false;
+            weapon.canBeParried = false;
 
 
         }
+        //List<Collider2D> colliders = new List<Collider2D>();
+        //ContactFilter2D contactFilter = new ContactFilter2D();
+        //contactFilter.SetLayerMask(weapon.attackDetectionLayer);
+
+        //int count = Physics2D.OverlapCollider(weapon.cldr, contactFilter, colliders);
+        //foreach (var hit in colliders)
+        //{
+        //    Player player = hit.GetComponent<Player>();
+        //    if (player != null)
+        //    {
+
+        //        //weapon.canDoDamage = false;
+        //        weapon.OnParry();
+        //        player.OnHit(weapon.enemy.transform, 4, true);
+        //        isParried = true;
+
+
+
+        //    }
+        //}
         if (stateTimer < 0 && pauseTimerStarted)
         {
             stateMachine.ChangeState(weapon.a1PostCastState);

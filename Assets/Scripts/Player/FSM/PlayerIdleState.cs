@@ -23,10 +23,12 @@ public class PlayerIdleState : PlayerGroundedState
         base.Update();
         
         // state transition logic
+        
         if (input.Xinput != 0)
         {
             stateMachine.ChangeState(player.moveState);
             return;
         }
+        
     }
 }

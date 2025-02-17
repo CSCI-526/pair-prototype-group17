@@ -36,7 +36,12 @@ public class PlayerState
         player.anim.SetFloat("yVelocity", rb.velocity.y);
         player.FlipController(input.Xinput);
         stateTimer -= Time.deltaTime;
-        
+        if (player.isDamaged)
+        {
+            stateMachine.ChangeState(player.onDamageState);
+            return;
+        }
+
     }
 
     public virtual void LateUpdate()

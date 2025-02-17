@@ -276,6 +276,7 @@ GameObject:
   - component: {fileID: 7920723416300001626}
   - component: {fileID: 1215482636037522824}
   - component: {fileID: 1323262770336607566}
+  - component: {fileID: 1925096029881765581}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -383,12 +384,12 @@ MonoBehaviour:
   input: {fileID: 0}
   playerPrototypeSprite: {fileID: 8762088196600153999}
   invincibleTimer: 0
+  frameRate: 60
   moveSpeed: 8
   stopSpeed: 4
   acceleration: 65
   rawSpeed: {x: 0, y: 0}
   facingRight: 1
-  knockBackForce: 5
   jumpSpeed: 16
   jumpXSpeedMultiplier: 0.8
   jumpCounter: 0
@@ -444,6 +445,10 @@ MonoBehaviour:
     m_Bits: 256
   showAttackBox: 1
   attackInvicibleTimeWindow: 0
+  knockBackForce: {x: 0, y: 0}
+  isDamaged: 0
+  impulseSource: {fileID: 0}
+  OnDamageCoolDown: 0.1
   groundCheck: {fileID: 5273977067956156465}
   grounCheckDistance: 0.2
   whatIsGround:
@@ -473,6 +478,59 @@ MonoBehaviour:
   jumpBufferTimeWindow: 0.1
   rollBufferTimeWindow: 0.2
   attackBufferTimeWindow: 0.1
+--- !u!114 &1925096029881765581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3614151293785239385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 180ecf9b41d478f468eb3e9083753217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ImpulseDefinition:
+    m_ImpulseChannel: 1
+    m_ImpulseShape: 3
+    m_CustomImpulseShape:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_ImpulseDuration: 0.2
+    m_ImpulseType: 0
+    m_DissipationRate: 0.25
+    m_RawSignal: {fileID: 0}
+    m_AmplitudeGain: 1
+    m_FrequencyGain: 1
+    m_RepeatMode: 0
+    m_Randomize: 1
+    m_TimeEnvelope:
+      m_AttackShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_DecayShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_AttackTime: 0
+      m_SustainTime: 0.2
+      m_DecayTime: 0.7
+      m_ScaleWithImpact: 1
+      m_HoldForever: 0
+    m_ImpactRadius: 100
+    m_DirectionMode: 0
+    m_DissipationMode: 2
+    m_DissipationDistance: 100
+    m_PropagationSpeed: 343
+  m_DefaultVelocity: {x: 1, y: 1, z: 0}
 --- !u!1 &5239748992460782308
 GameObject:
   m_ObjectHideFlags: 0
