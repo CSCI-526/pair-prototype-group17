@@ -47,14 +47,14 @@ public class TimePauseMissle : InteractableProjectile
     public void StopAndRequestPressingJumpKey()
     {
         // If time is not stopped and the timePauseMissle is in the area of parry, stop time!
-        if (!isTimeStopped && IsInTheAreaOfParry() && counter == 0)
+        if (!isTimeStopped && IsInTheAreaOfJumpping() && counter % 2 == 0)
         {
             TimeManager.instance.ToggleTimeStop();
             isTimeStopped = !isTimeStopped;
             counter++;
         }
         // If time is stopped and the Jump key is pressed, resume time.
-        if (isTimeStopped && PlayerInput.instance.Jump && counter == 1)
+        if (isTimeStopped && PlayerInput.instance.Jump && counter % 2 == 1)
         {
             TimeManager.instance.ToggleTimeStop();
             isTimeStopped = !isTimeStopped;
@@ -64,7 +64,7 @@ public class TimePauseMissle : InteractableProjectile
     public void StopAndReuqestPressingXXXKey(KeyCode key)
     {
         // If time is not stopped and the timePauseMissle is in the area of parry, stop time!
-        if (!isTimeStopped && IsInTheAreaOfParry() && counter == 0)
+        if (!isTimeStopped && IsInTheAreaOfJumpping() && counter % 2 == 0)
         {
             Debug.Log("Stop time.");
             TimeManager.instance.ToggleTimeStop();
@@ -72,7 +72,7 @@ public class TimePauseMissle : InteractableProjectile
             counter++;
         }
         // If time is stopped and the Jump key is pressed, resume time.
-        if (isTimeStopped && Input.GetKeyDown(key) && counter == 1)
+        if (isTimeStopped && Input.GetKeyDown(key) && counter % 2 == 1)
         {
             Debug.Log("Resume time.");
             TimeManager.instance.ToggleTimeStop();
@@ -186,11 +186,16 @@ public class TimePauseMissle : InteractableProjectile
         missileTipRenderer.color = color;
     }
 
-    public bool IsInTheAreaOfParry()
+    public bool IsInTheAreaOfJumpping()
     {
+        //Vector2 playerSize = target.GetBounds();
+        //float playerWidth = playerSize.x;
+        //float playerHeight = playerSize.y;
         Vector2 jumpBoxCenter = (Vector2)target.transform.position + target.jumpBoxCenterOffset;
-        Vector2 jumpBoxTopLeftCorner = jumpBoxCenter - new Vector2(target.jumpBoxWidth / 2, target.jumpBoxHeight / 2);
-        Vector2 jumpBoxBottomRightCorner = jumpBoxCenter + new Vector2(target.jumpBoxWidth / 2, target.jumpBoxHeight / 2);
+        Vector2 jumpBoxTopLeftCorner = jumpBoxCenter - new Vector2(target.jumpBoxWidth / 2, -target.jumpBoxHeight / 2);
+        //Vector2 jumpBoxTopLeftCorner = jumpBoxCenter - new Vector2(target.jumpBoxWidth / 2, playerHeight / 2);
+        Vector2 jumpBoxBottomRightCorner = jumpBoxCenter + new Vector2(target.jumpBoxWidth / 2, -target.jumpBoxHeight / 2);
+        //Vector2 jumpBoxBottomRightCorner = jumpBoxCenter + new Vector2(target.jumpBoxWidth / 2, target.jumpBoxHeight - playerHeight / 2);
         Collider2D[] colliders = Physics2D.OverlapAreaAll(jumpBoxTopLeftCorner, jumpBoxBottomRightCorner, target.canBeJumpParried);
 
         return colliders.Contains(GetComponent<Collider2D>());

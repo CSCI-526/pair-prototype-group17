@@ -319,4 +319,11 @@ public class Player : MonoBehaviour
         return false;
     }
 
+    // Get the size of the player.
+    //public Vector2 GetBounds()
+    //{
+    //    SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+    //    return spriteRenderer.bounds.size;
+    //}
+
 }
