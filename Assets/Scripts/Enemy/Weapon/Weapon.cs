@@ -20,6 +20,8 @@ public class Weapon : MonoBehaviour
     public float turnSpeed;
     public Collider2D cldr;
     public LayerMask attackDetectionLayer;
+    public bool canDoDamageToOwner;
+    public bool isStackedOnOwner;
 
     [Header("Attack")]
     public bool curveDoneSwitch;
@@ -40,6 +42,7 @@ public class Weapon : MonoBehaviour
     public WeaponState a1State { get; private set; }
     public WeaponState a1PostCastState { get; private set; }
     public WeaponState u1PreCastState { get; private set; }
+    public WeaponState stackOnOwnerState { get; private set; }
 
 
     #endregion
@@ -55,6 +58,7 @@ public class Weapon : MonoBehaviour
         a1State = new A1State(this, stateMachine);
         a1PostCastState = new A1PostCastState(this, stateMachine);
         u1PreCastState = new U1PreCastState(this, stateMachine);
+        stackOnOwnerState = new StackState(this, stateMachine);
 
         //enemy = GetComponentInParent<Enemy>();
 
@@ -73,6 +77,8 @@ public class Weapon : MonoBehaviour
         canDoDamage = false;
         canBeParried = false;
         rb.gravityScale = 0;
+        canDoDamageToOwner = false;
+        isStackedOnOwner = false;
         //// important!!! put initialize in last line of start if the first state Enter() uses any pointer that is done in start.
         stateMachine.Initialize(idleState);
         
@@ -151,7 +157,7 @@ public class Weapon : MonoBehaviour
         if (canDoDamage)
         {
             Player player = other.gameObject.GetComponent<Player>();
-            Enemy enemy = other.gameObject.GetComponent<Enemy>();
+            
             if (player != null)
             {
                 if (player.OnDamage())
@@ -159,12 +165,35 @@ public class Weapon : MonoBehaviour
                     player.OnHit(transform,8, true);
                 }
             }
-            if (enemy != null)
-            {
-                enemy.OnDamage();
-            }
+            
 
         }
+        if (canDoDamageToOwner)
+        {
+            Enemy enemy = other.gameObject.GetComponent<Enemy>();
+            if(enemy != null)
+            {
+                
+                 enemy.OnDeadlyDamage();
+                 isStackedOnOwner = true;
+                
+            }
+        }
+    }
+
+    public void ResetToIdle() // should still call change state to idle after this
+    {
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.velocity = Vector2.zero;
+        rb.angularVelocity = 0;
+        rb.gravityScale = 0;
+        hitCounter = 0;
+        a1Switch = false;
+        canDoDamage = false;
+        canBeParried = false;
+        canDoDamageToOwner = false;
+        isStackedOnOwner = false;
+        enemy.isInvincible = false;
     }
 
 

@@ -588,9 +588,10 @@ MonoBehaviour:
   attackBoxCenterOffset: {x: 0.93, y: 0.15}
   attackBoxWidth: 3.52
   attackBoxHeight: 1.99
-  attackBoxLayerMask:
+  canDoDamage: 0
+  canBeAttacked:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   canBeAttackParried:
     serializedVersion: 2
     m_Bits: 32768
@@ -602,7 +603,7 @@ MonoBehaviour:
   knockBackForce: {x: 0, y: 0}
   isDamaged: 0
   impulseSource: {fileID: 0}
-  OnDamageCoolDown: 0.1
+  OnDamageCoolDown: 0.2
   groundCheck: {fileID: 5273977067956156465}
   grounCheckDistance: 0.2
   whatIsGround:

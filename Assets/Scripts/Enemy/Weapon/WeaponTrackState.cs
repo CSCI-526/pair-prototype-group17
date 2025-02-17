@@ -19,6 +19,7 @@ public class WeaponTrackState : WeaponState
         weapon.canBeParried = true;
         weapon.transform.up = Vector2.right * weapon.enemy.facingDir;
         weapon.enemy.ForceMove(-2f);
+        stateTimer = 7f;
         //stateTimer = 1f;
     }
     public override void Exit()
@@ -33,6 +34,12 @@ public class WeaponTrackState : WeaponState
     {
         base.Update();
         weapon.TrackTarget();
+        if (stateTimer < 0)
+        {
+            weapon.ResetToIdle();
+            stateMachine.ChangeState(weapon.idleState);
+            weapon.enemy.stateMachine.ChangeState(weapon.enemy.idleState);
+        }
         //if (stateTimer < 0 && trigger)
         //{
         //    weapon.enemy.ForceJump(4f);

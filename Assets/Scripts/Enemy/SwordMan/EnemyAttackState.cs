@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class EnemyAttackState : EnemyState
 {
@@ -31,7 +32,9 @@ public class EnemyAttackState : EnemyState
         if (enemy.attackOver)
         {
             stateMachine.ChangeState(enemy.idleState);
+            return;
         }
+        
 
         //Debug.Log("Attack");
     }

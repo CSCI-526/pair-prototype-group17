@@ -2,41 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyState
+public class EntityState : MonoBehaviour
 {
-    protected EnemyStateMachine stateMachine;
-    protected Enemy enemy;
+    protected EntityStateMachine stateMachine;
+    protected Entity entity;
     protected Rigidbody2D rb;
     public string animBoolName;
     protected float stateTimer;
 
-    public EnemyState(Enemy _enemy, EnemyStateMachine _stateMachine, string animBoolName)
+    public EntityState(Entity _entity, EntityStateMachine _stateMachine, string animBoolName)
     {
-        this.enemy = _enemy;
+        this.entity = _entity;
         this.stateMachine = _stateMachine;
         this.animBoolName = animBoolName;
     }
 
     public virtual void Enter()
     {
-        rb = enemy.rb;
-        
+        rb = entity.rb;
+
     }
 
     public virtual void Exit()
     {
-        
+
     }
 
     public virtual void Update()
     {
-        
+
         stateTimer -= Time.deltaTime;
-        if (enemy.health <= 0)
-        {
-            stateMachine.ChangeState(enemy.deathState);
-            return;
-        }
 
     }
 
@@ -45,9 +40,6 @@ public class EnemyState
 
     }
 
-    public virtual void AnimationOverEvent()
-    {
 
-    }
 
 }

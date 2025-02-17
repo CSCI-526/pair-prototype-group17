@@ -25,6 +25,7 @@ public class EnemyIdleState : EnemyState
         if (stateTimer < 0)
         {
             stateMachine.ChangeState(enemy.moveState);
+            return;
         }
         
     }

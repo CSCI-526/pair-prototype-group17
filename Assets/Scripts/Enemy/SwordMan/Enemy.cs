@@ -1,15 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
     // Start is called before the first frame update
     public Rigidbody2D rb { get; private set; }
+    public CinemachineImpulseSource impulseSource;
 
+    [Header("Stats")]
+    public int health;
+    public bool isVulnerable;
     [Header("PlayerDetection")]
     public GameObject player;
     public SpriteRenderer enemyPrototypeSprite;
+    public SpriteRenderer enemyEye;
     public float playerDetectionRangeX;
     public float playerDetectionRangeY;
     public bool showDetectionBox;
@@ -26,6 +33,11 @@ public class Enemy : MonoBehaviour
     public float attackRangeY;
     public bool showAttackBox;
     public bool attackOver;
+
+    [Header("OnDamage")]
+    public bool isInvincible;
+    public float onDamageCoolDown;
+    public bool isDamaged;
     
 
     [Header("Collision")]
@@ -44,6 +56,7 @@ public class Enemy : MonoBehaviour
     public EnemyState moveState { get; private set; }
     public EnemyState attackState { get; private set; }
     public EnemyState u1State { get; private set; }
+    public EnemyState deathState { get; private set; }
     #endregion
 
     private void Awake()
@@ -53,23 +66,39 @@ public class Enemy : MonoBehaviour
         moveState = new EnemyMoveState(this, stateMachine, "Move");
         attackState = new EnemyAttackState(this, stateMachine, "Attack");
         u1State = new EnemyU1State(this, stateMachine, "AttackU1");
+        deathState = new EnemyDeathState(this, stateMachine, "Death");
     }
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         weapon = GetComponentInChildren<Weapon>();
+        isInvincible = false;
+        impulseSource = GetComponent<CinemachineImpulseSource>();
+        health = 100;
+        isVulnerable = false;
         stateMachine.Initialize(idleState);
+
+
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        
         stateMachine.currentState.Update();
-        //if (Input.GetKeyDown(KeyCode.S))
-        //{
-        //    lerpTrail.StartLerp();
-        //}
+       
+
+        if (isInvincible)
+        {
+            enemyPrototypeSprite.color = Color.green;
+        }
+        else
+        {
+            enemyPrototypeSprite.color = Color.yellow;
+        }
+        
     }
 
     public bool IsGroundDetected()
@@ -164,7 +193,56 @@ public class Enemy : MonoBehaviour
 
     public void OnDamage()
     {
-        Debug.Log("Enemy hit");
+        if (!isInvincible) {
+            StartCoroutine(nameof(SetInivincibleDelay));
+            CameraShakeManager.instance.CameraShake(impulseSource);
+            TimeManager.instance.SlowTime(0.07f, 0.1f);
+            if (isVulnerable)
+            {
+
+                health = 0;
+            }
+            else {
+                health -= 10;
+            }
+        }
+    }
+
+    public void OnDeadlyDamage()
+    {
+
+    }
+    
+
+    IEnumerator SetInivincibleDelay()
+    {
+        //Debug.Log("Iam here");
+        isInvincible = true;
+        yield return new WaitForSecondsRealtime(onDamageCoolDown);
+        isInvincible= false;
+    }
+
+    public void StartEyeColorChange(Color startColor, Color endColor, float duration)
+    {
+        
+        StartCoroutine(ChangeColorCoroutine(startColor, endColor, duration));
+        
+    }
+    private IEnumerator ChangeColorCoroutine(Color startColor, Color endColor, float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            enemyEye.color = Color.Lerp(startColor, endColor, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        enemyEye.color = endColor;
+    }
+
+    public void DestroyMe()
+    {
+        Destroy(gameObject);
     }
 
 }

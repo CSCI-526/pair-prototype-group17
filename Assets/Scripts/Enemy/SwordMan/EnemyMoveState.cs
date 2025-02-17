@@ -56,6 +56,7 @@ public class EnemyMoveState : EnemyState
         {
             enemy.Flip();
             stateMachine.ChangeState(enemy.idleState);
+            return;
         }
         rb.velocity = new Vector2(enemy.moveSpeed * enemy.facingDir, rb.velocity.y);
     }

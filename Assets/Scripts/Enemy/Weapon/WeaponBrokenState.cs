@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class WeaponBrokenState : WeaponState
 {
@@ -12,7 +13,8 @@ public class WeaponBrokenState : WeaponState
         
         base.Enter();
         weapon.SetColor(Color.gray);
-        
+        weapon.enemy.isVulnerable = true;
+        //weapon.transform.SetParent(null, false);
         rb.velocity = new Vector2(rb.velocity.x * 0.2f, 0);
         rb.gravityScale = 3;
     }

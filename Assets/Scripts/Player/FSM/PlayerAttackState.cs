@@ -25,6 +25,7 @@ public class PlayerAttackState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        player.canDoDamage = true;
         input.isAttackBuffered = false;
         player.attackIndicator.SetActive(true);
         player.attackTimer = player.attackCoolDown;
@@ -47,6 +48,7 @@ public class PlayerAttackState : PlayerState
         player.attackIndicator.SetActive(false);
         player.animWeapon.SetBool("BigSlash", false);
         rb.velocity = new Vector2(rb.velocity.x, 0);
+        player.canDoDamage = false;
         base.Exit();
     }
 
@@ -106,6 +108,7 @@ public class PlayerAttackState : PlayerState
             {
                 missile.TrackBackOriginator();
                 isParried = true;
+                player.canDoDamage = false;
             }
         }
         
@@ -117,9 +120,35 @@ public class PlayerAttackState : PlayerState
             {
                 
                 //weapon.canDoDamage = false;
-                weapon.OnParry();
-                player.OnHit(weapon.enemy.transform, 4, true);
-                isParried = true;
+                if (weapon.canBeParried)
+                {
+                    weapon.OnParry();
+                    player.OnHit(weapon.enemy.transform, 4, true);
+                    isParried = true;
+                    player.canDoDamage=false;
+                }
+                
+                //player.canDoDamage = false;
+
+
+
+            }
+        }
+
+        colliders = Physics2D.OverlapAreaAll(attackBoxTopLeftCorner, attackBoxBottomRightCorner, player.canBeAttacked);
+        foreach (var hit in colliders)
+        {
+            Enemy enemy = hit.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+
+                //weapon.canDoDamage = false;
+                if (player.canDoDamage)
+                {
+                    enemy.OnDamage();
+                    player.canDoDamage = false;
+                }
+                
 
 
 

@@ -12,13 +12,15 @@ public class WeaponTrackBackState : WeaponState
     public override void Enter()
     {
         base.Enter();
-
+        weapon.canDoDamageToOwner = true;
         
 
         weapon.TrackBackOriginator();
+        stateTimer = 7f;
     }
     public override void Exit()
     {
+        weapon.canDoDamageToOwner = false;
         base.Exit();
     }
     public override void LateUpdate()
@@ -27,9 +29,21 @@ public class WeaponTrackBackState : WeaponState
     }
     public override void Update()
     {
+        base.Update();
         rb.velocity = weapon.transform.up * weapon.moveSpeed;
         rb.angularVelocity = 0;
-        base.Update();
+        if (weapon.isStackedOnOwner)
+        {
+            stateMachine.ChangeState(weapon.stackOnOwnerState);
+            return;
+        }
+        if (stateTimer < 0)
+        {
+            weapon.ResetToIdle();
+            stateMachine.ChangeState(weapon.idleState);
+            weapon.enemy.stateMachine.ChangeState(weapon.enemy.idleState);
+        }
+
     }
 }
 
