@@ -84,8 +84,8 @@ public class PlayerJumpState : PlayerState
     private void JumpParryCheck()
     {
         Vector2 jumpBoxCenter = (Vector2)player.transform.position + player.jumpBoxCenterOffset;
-        Vector2 jumpBoxTopLeftCorner = jumpBoxCenter - new Vector2(player.jumpBoxWidth / 2, player.jumpBoxHeight / 2);
-        Vector2 jumpBoxBottomRightCorner = jumpBoxCenter + new Vector2(player.jumpBoxWidth / 2, player.jumpBoxHeight / 2);
+        Vector2 jumpBoxTopLeftCorner = new Vector2(jumpBoxCenter.x  - player.jumpBoxWidth / 2, jumpBoxCenter.y + player.jumpBoxHeight / 2);
+        Vector2 jumpBoxBottomRightCorner = new Vector2 (jumpBoxCenter.x + player.jumpBoxWidth / 2, jumpBoxCenter.y - player.jumpBoxHeight / 2);
         Collider2D[] colliders = Physics2D.OverlapAreaAll(jumpBoxTopLeftCorner, jumpBoxBottomRightCorner, player.canBeJumpParried);
         bool isParried = false;
         foreach (var hit in colliders)

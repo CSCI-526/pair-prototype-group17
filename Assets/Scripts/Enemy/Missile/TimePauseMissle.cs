@@ -188,14 +188,14 @@ public class TimePauseMissle : InteractableProjectile
 
     public bool IsInTheAreaOfJumpping()
     {
-        //Vector2 playerSize = target.GetBounds();
-        //float playerWidth = playerSize.x;
-        //float playerHeight = playerSize.y;
-        Vector2 jumpBoxCenter = (Vector2)target.transform.position + target.jumpBoxCenterOffset;
-        Vector2 jumpBoxTopLeftCorner = jumpBoxCenter - new Vector2(target.jumpBoxWidth / 2, -target.jumpBoxHeight / 2);
-        //Vector2 jumpBoxTopLeftCorner = jumpBoxCenter - new Vector2(target.jumpBoxWidth / 2, playerHeight / 2);
-        Vector2 jumpBoxBottomRightCorner = jumpBoxCenter + new Vector2(target.jumpBoxWidth / 2, -target.jumpBoxHeight / 2);
-        //Vector2 jumpBoxBottomRightCorner = jumpBoxCenter + new Vector2(target.jumpBoxWidth / 2, target.jumpBoxHeight - playerHeight / 2);
+        Vector2 playerSize = target.GetBounds();
+        float playerWidth = playerSize.x;
+        float playerHeight = playerSize.y;
+        Vector2 jumpBoxCenter = (Vector2)target.transform.position;
+        //Vector2 jumpBoxTopLeftCorner = jumpBoxCenter - new Vector2(target.jumpBoxWidth / 2, -target.jumpBoxHeight / 2);
+        Vector2 jumpBoxTopLeftCorner = jumpBoxCenter - new Vector2(target.jumpBoxWidth / 2, playerHeight / 2);
+        //Vector2 jumpBoxBottomRightCorner = jumpBoxCenter + new Vector2(target.jumpBoxWidth / 2, -target.jumpBoxHeight / 2);
+        Vector2 jumpBoxBottomRightCorner = jumpBoxCenter + new Vector2(target.jumpBoxWidth / 2, target.jumpBoxHeight - playerHeight / 2);
         Collider2D[] colliders = Physics2D.OverlapAreaAll(jumpBoxTopLeftCorner, jumpBoxBottomRightCorner, target.canBeJumpParried);
 
         return colliders.Contains(GetComponent<Collider2D>());

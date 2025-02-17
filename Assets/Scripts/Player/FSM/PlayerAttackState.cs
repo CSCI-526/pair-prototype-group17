@@ -95,8 +95,8 @@ public class PlayerAttackState : PlayerState
             
         }
         attackBoxCenter = new Vector2(boxCenterX, boxCenterY);
-        attackBoxTopLeftCorner = attackBoxCenter - new Vector2(player.attackBoxWidth / 2, player.attackBoxHeight / 2);
-        attackBoxBottomRightCorner = attackBoxCenter + new Vector2(player.attackBoxWidth / 2, player.attackBoxHeight / 2);
+        attackBoxTopLeftCorner = attackBoxCenter - new Vector2(player.attackBoxWidth / 2, -player.attackBoxHeight / 2);
+        attackBoxBottomRightCorner = attackBoxCenter + new Vector2(player.attackBoxWidth / 2, -player.attackBoxHeight / 2);
        
 
         Collider2D[] colliders = Physics2D.OverlapAreaAll(attackBoxTopLeftCorner, attackBoxBottomRightCorner, player.canBeAttackParried);
