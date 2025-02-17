@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
     public SpriteRenderer playerPrototypeSprite;
     public float invincibleTimer;
     public int frameRate = 60;
+    public int health;
+    public PlayerHealth playerHealthUI;
     
     [Header("Movement")]
     public float moveSpeed;
@@ -149,7 +151,10 @@ public class Player : MonoBehaviour
         isDamaged = false;
         input.EnableGamePlayInputs();
         impulseSource = GetComponent<CinemachineImpulseSource>();
+        health = 100;
+        playerHealthUI = GetComponent<PlayerHealth>();
         stateMachine.Initialize(idleState);
+        
        
         
     }
@@ -197,6 +202,7 @@ public class Player : MonoBehaviour
 
             }
         }
+        playerHealthUI.health = health;
         
         
 

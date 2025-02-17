@@ -11,13 +11,13 @@ public class PlayerOnDamageState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        player.health -= 10;
         CameraShakeManager.instance.CameraShake(player.impulseSource);
         stateTimer = player.OnDamageCoolDown;
         if (stateMachine.previousState != player.wallSlideState)
         {
             if (player.knockBackForce.y == 0)
             {
-
                 rb.velocity = new Vector2(player.knockBackForce.x, rb.velocity.y);
             }
             else

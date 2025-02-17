@@ -12,7 +12,9 @@ public class WeaponBrokenState : WeaponState
         
         base.Enter();
         weapon.SetColor(Color.gray);
-        rb.velocity = new Vector2(rb.velocity.x * 0.2f, -3f);
+        
+        rb.velocity = new Vector2(rb.velocity.x * 0.2f, 0);
+        rb.gravityScale = 3;
     }
     public override void Exit()
     {

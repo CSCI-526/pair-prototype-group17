@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerInput : MonoBehaviour
 {
+    public static PlayerInput instance;
     public InputActions inputActions;
     public bool Jump => inputActions.GamePlay.Jump.WasPressedThisFrame();
     public bool isJumpBuffered { get; set; }
@@ -24,10 +25,16 @@ public class PlayerInput : MonoBehaviour
 
     void Awake()
     {
-        inputActions = new InputActions();
-        jumpBufferTime = new WaitForSeconds(jumpBufferTimeWindow);
-        rollBufferTime = new WaitForSeconds(rollBufferTimeWindow);
-        attackBufferTime = new WaitForSeconds(attackBufferTimeWindow);
+        if (instance == null)
+        {
+            instance = this;
+            inputActions = new InputActions();
+            jumpBufferTime = new WaitForSeconds(jumpBufferTimeWindow);
+            rollBufferTime = new WaitForSeconds(rollBufferTimeWindow);
+            attackBufferTime = new WaitForSeconds(attackBufferTimeWindow);
+        }
+        
+        
     }
     public void DisableGamePlayInputs()
     {

@@ -13,11 +13,12 @@ public class WeaponTrackState : WeaponState
     {
         
         base.Enter();
+        weapon.rb.bodyType = RigidbodyType2D.Dynamic;
         trigger = true;
         weapon.canDoDamage = true;
         weapon.canBeParried = true;
         weapon.transform.up = Vector2.right * weapon.enemy.facingDir;
-        //weapon.enemy.ForceJump(4f);
+        weapon.enemy.ForceMove(-2f);
         //stateTimer = 1f;
     }
     public override void Exit()

@@ -6,7 +6,7 @@ public class U1PreCastState : WeaponState
 {
     // Start is called before the first frame update
     bool pauseTimerStarted;
-    float pauseTime = 0.02f;
+    float pauseTime = 0.3f;
     public U1PreCastState(Weapon _weapon, WeaponStateMachine _stateMachine) : base(_weapon, _stateMachine)
     {
     }

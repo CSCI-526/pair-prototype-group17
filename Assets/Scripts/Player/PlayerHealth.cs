@@ -11,14 +11,15 @@ public class PlayerHealth : MonoBehaviour
     void Start()
     {
         health = maxHealth;
-        
+        UpdateHealthBar();
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        healthBar.fillAmount = Mathf.Clamp(health / maxHealth, 0, 1);
-        
+        UpdateHealthBar();
+
     }
     public void Damage(float damageAmount)
     {
@@ -27,5 +28,26 @@ public class PlayerHealth : MonoBehaviour
     public void Heal(float healAmount)
     {
         health = Mathf.Min(maxHealth, health + healAmount);
+    }
+    void UpdateHealthBar()
+    {
+        healthBar.fillAmount = Mathf.Clamp(health / maxHealth, 0, 1);
+        ChangeHealthBarColor();
+    }
+
+    void ChangeHealthBarColor()
+    {
+        if (health <= maxHealth * 0.25f) // 25% or less
+        {
+            healthBar.color = Color.red;
+        }
+        else if (health <= maxHealth * 0.50f) // Between 25% and 50%
+        {
+            healthBar.color = Color.yellow;
+        }
+        else // More than 50%
+        {
+            healthBar.color = new Color(0, 1, 0); // Pure green
+        }
     }
 }

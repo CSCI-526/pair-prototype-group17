@@ -72,6 +72,7 @@ public class Weapon : MonoBehaviour
         impulseSource = GetComponent<CinemachineImpulseSource>();
         canDoDamage = false;
         canBeParried = false;
+        rb.gravityScale = 0;
         //// important!!! put initialize in last line of start if the first state Enter() uses any pointer that is done in start.
         stateMachine.Initialize(idleState);
         
