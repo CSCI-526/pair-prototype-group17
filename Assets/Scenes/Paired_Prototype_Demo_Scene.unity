@@ -630,8 +630,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1215482636037522824, guid: 66b10245d9cb3514798e676e46dee90d, type: 3}
+      propertyPath: jumpBoxHeight
+      value: 4.53
+      objectReference: {fileID: 0}
+    - target: {fileID: 1215482636037522824, guid: 66b10245d9cb3514798e676e46dee90d, type: 3}
       propertyPath: showAttackBox
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1215482636037522824, guid: 66b10245d9cb3514798e676e46dee90d, type: 3}
+      propertyPath: jumpBoxCenterOffset.y
+      value: -1.56
       objectReference: {fileID: 0}
     - target: {fileID: 1215482636037522824, guid: 66b10245d9cb3514798e676e46dee90d, type: 3}
       propertyPath: attackBoxLayerMask.m_Bits
