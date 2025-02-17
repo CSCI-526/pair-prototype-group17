@@ -62,6 +62,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""TestKey1"",
+                    ""type"": ""Button"",
+                    ""id"": ""f9a49b2a-894e-4d78-ac55-cd9d5f9abbd3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -207,6 +216,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Roll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2e2b8d7a-cf21-46e1-ada9-918071b5f8d0"",
+                    ""path"": ""<Keyboard>/p"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TestKey1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -219,6 +239,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_GamePlay_Jump = m_GamePlay.FindAction("Jump", throwIfNotFound: true);
         m_GamePlay_Attack = m_GamePlay.FindAction("Attack", throwIfNotFound: true);
         m_GamePlay_Roll = m_GamePlay.FindAction("Roll", throwIfNotFound: true);
+        m_GamePlay_TestKey1 = m_GamePlay.FindAction("TestKey1", throwIfNotFound: true);
     }
 
     ~@InputActions()
@@ -289,6 +310,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_GamePlay_Jump;
     private readonly InputAction m_GamePlay_Attack;
     private readonly InputAction m_GamePlay_Roll;
+    private readonly InputAction m_GamePlay_TestKey1;
     public struct GamePlayActions
     {
         private @InputActions m_Wrapper;
@@ -297,6 +319,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_GamePlay_Jump;
         public InputAction @Attack => m_Wrapper.m_GamePlay_Attack;
         public InputAction @Roll => m_Wrapper.m_GamePlay_Roll;
+        public InputAction @TestKey1 => m_Wrapper.m_GamePlay_TestKey1;
         public InputActionMap Get() { return m_Wrapper.m_GamePlay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -318,6 +341,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Roll.started += instance.OnRoll;
             @Roll.performed += instance.OnRoll;
             @Roll.canceled += instance.OnRoll;
+            @TestKey1.started += instance.OnTestKey1;
+            @TestKey1.performed += instance.OnTestKey1;
+            @TestKey1.canceled += instance.OnTestKey1;
         }
 
         private void UnregisterCallbacks(IGamePlayActions instance)
@@ -334,6 +360,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Roll.started -= instance.OnRoll;
             @Roll.performed -= instance.OnRoll;
             @Roll.canceled -= instance.OnRoll;
+            @TestKey1.started -= instance.OnTestKey1;
+            @TestKey1.performed -= instance.OnTestKey1;
+            @TestKey1.canceled -= instance.OnTestKey1;
         }
 
         public void RemoveCallbacks(IGamePlayActions instance)
@@ -357,5 +386,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnRoll(InputAction.CallbackContext context);
+        void OnTestKey1(InputAction.CallbackContext context);
     }
 }

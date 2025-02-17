@@ -34,7 +34,7 @@ public class PlayerState
 
     public virtual void Update() {
         player.anim.SetFloat("yVelocity", rb.velocity.y);
-        player.FlipController(rb.velocity.x);
+        player.FlipController(input.Xinput);
         stateTimer -= Time.deltaTime;
         
     }
