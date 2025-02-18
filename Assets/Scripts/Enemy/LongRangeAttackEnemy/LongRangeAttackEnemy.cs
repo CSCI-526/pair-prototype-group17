@@ -1,3 +1,5 @@
+using Cinemachine;
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,13 +8,22 @@ public class LongRangeAttackEnemy : MonoBehaviour
 {
     // Start is called before the first frame update
     public Rigidbody2D rb { get; private set; }
+    public CinemachineImpulseSource impulseSource;
 
+    [Header("Stats")]
+    public int health;
+    public bool isVulnerable;
     [Header("PlayerDetection")]
-    public GameObject player;
+    public GameObject target;
+    private Player player;
     public SpriteRenderer enemyPrototypeSprite;
+    public SpriteRenderer enemyEye;
     public float playerDetectionRangeX;
     public float playerDetectionRangeY;
-    public bool showDetectionBox;
+    public bool showDetectionBox = false;
+    public bool showCircles = true;
+    public float detectionCircleRadius = 10.0f;
+    public float escapeCircleRadius = 15.0f;
 
 
     [Header("Movement")]
@@ -26,6 +37,18 @@ public class LongRangeAttackEnemy : MonoBehaviour
     public float attackRangeY;
     public bool showAttackBox;
     public bool attackOver;
+    public float missileSpeed;
+    public float missileTurnSpeed;
+    public float missileLifeTime;
+    public GameObject TimePauseMissilePrefab;
+    public GameObject HomingMisslePrefab;
+    private int attack_counter = 0;
+   
+
+    [Header("OnDamage")]
+    public bool isInvincible;
+    public float onDamageCoolDown;
+    public bool isDamaged;
 
 
     [Header("Collision")]
@@ -38,38 +61,64 @@ public class LongRangeAttackEnemy : MonoBehaviour
     public float wallCheckDistance;
     public LayerMask whatIsWall;
 
+    public Missiles HomingMissile = Missiles.HomingMissile;
+    public Missiles TimePauseMissile = Missiles.TimePauseMissile;
+
+    #region Weapons
+    public enum Missiles
+    {
+        HomingMissile = 1,
+        TimePauseMissile = 2
+    }
+    #endregion
+
     #region States
-    public EnemyStateMachine stateMachine { get; private set; }
-    public EnemyState idleState { get; private set; }
-    public EnemyState moveState { get; private set; }
-    public EnemyState attackState { get; private set; }
-    public EnemyState u1State { get; private set; }
+    public LongRangeAttackEnemyStateMachine stateMachine { get; private set; }
+    public LongRangeAttackEnemyState idleState { get; private set; }
+    //public LongRangeAttackEnemyState moveState { get; private set; }
+    public LongRangeAttackEnemyState attackState { get; private set; }
+    //public LongRangeAttackEnemyState u1State { get; private set; }
+    public LongRangeAttackEnemyState deathState { get; private set; }
     #endregion
 
     private void Awake()
     {
-        //stateMachine = new EnemyStateMachine();
-        //idleState = new EnemyIdleState(this, stateMachine, "Idle");
-        //moveState = new EnemyMoveState(this, stateMachine, "Move");
-        //attackState = new EnemyAttackState(this, stateMachine, "Attack");
-        //u1State = new EnemyU1State(this, stateMachine, "AttackU1");
+        stateMachine = new LongRangeAttackEnemyStateMachine();
+        idleState = new LongRangeAttackEnemyIdleState(this, stateMachine, "Idle");
+        //moveState = new LongRangeAttackEnemyMoveState(this, stateMachine, "Move");
+        attackState = new LongRangeAttackEnemyAttackState(this, stateMachine, "Attack");
+        //u1State = new LongRangeAttackEnemyU1State(this, stateMachine, "AttackU1");
+        deathState = new LongRangeAttackEnemyDeathState(this, stateMachine, "Death");
     }
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         weapon = GetComponentInChildren<Weapon>();
+        isInvincible = false;
+        impulseSource = GetComponent<CinemachineImpulseSource>();
+        health = 100;
+        isVulnerable = false;
+        if(typeof(Player) != null) player = target.GetComponent<Player>();
         stateMachine.Initialize(idleState);
     }
 
     // Update is called once per frame
     void Update()
     {
-        //stateMachine.currentState.Update();
-        //if (Input.GetKeyDown(KeyCode.S))
-        //{
-        //    lerpTrail.StartLerp();
-        //}
+
+        stateMachine.currentState.Update();
+
+
+        if (isInvincible)
+        {
+            enemyPrototypeSprite.color = Color.green;
+        }
+        else
+        {
+            enemyPrototypeSprite.color = Color.yellow;
+        }
+
     }
 
     public bool IsGroundDetected()
@@ -81,10 +130,9 @@ public class LongRangeAttackEnemy : MonoBehaviour
     public bool IsWallDetected()
     {
 
-        bool wallCheck1 = Physics2D.Raycast(wallCheck.position, Vector2.right * facingDir, wallCheckDistance, whatIsWall);
+        bool topCheck = Physics2D.Raycast(wallCheck.position, Vector2.right * facingDir, wallCheckDistance, whatIsWall);
         //bool bottomCheck = Physics2D.Raycast(wallCheckBottom.position, Vector2.right * facingDir, wallCheckDistance, whatIsWall);
-        //return topCheck && bottomCheck;
-        return wallCheck1;
+        return topCheck;
     }
     private void OnDrawGizmos()
     {
@@ -92,6 +140,7 @@ public class LongRangeAttackEnemy : MonoBehaviour
         Gizmos.DrawLine(groundCheckFront.position, new Vector3(groundCheckFront.position.x, groundCheckFront.position.y - grounCheckDistance));
         Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance * facingDir, wallCheck.position.y));
         //Gizmos.DrawLine(wallCheckBottom.position, new Vector3(wallCheckBottom.position.x + wallCheckDistance * facingDir, wallCheckBottom.position.y));
+        
         if (showDetectionBox)
         {
 
@@ -104,6 +153,16 @@ public class LongRangeAttackEnemy : MonoBehaviour
             Gizmos.DrawWireCube(new Vector2(transform.position.x, transform.position.y), new Vector3(attackRangeX, attackRangeY, 0));
 
         }
+        //if (showAttackBox)
+        //{
+        //    Gizmos.DrawWireCube(new Vector2(transform.position.x, transform.position.y), );
+        //}
+        if (showCircles)
+        {
+            Gizmos.DrawWireSphere(this.transform.position, detectionCircleRadius);
+            Gizmos.DrawWireSphere(this.transform.position, escapeCircleRadius);
+        }
+
 
 
         //Gizmos.DrawWireCube((Vector2)transform.position + attackBoxCenterOffset, new Vector3(attackBoxWidth, attackBoxHeight,  0));
@@ -165,6 +224,114 @@ public class LongRangeAttackEnemy : MonoBehaviour
 
     public void OnDamage()
     {
-        Debug.Log("Enemy hit");
+        if (!isInvincible)
+        {
+            StartCoroutine(nameof(SetInivincibleDelay));
+            CameraShakeManager.instance.CameraShake(impulseSource);
+            TimeManager.instance.SlowTime(0.07f, 0.1f);
+            if (isVulnerable)
+            {
+
+                health = 0;
+            }
+            else
+            {
+                health -= 10;
+            }
+        }
     }
+
+    public void OnDeadlyDamage()
+    {
+
+    }
+
+
+    IEnumerator SetInivincibleDelay()
+    {
+        //Debug.Log("Iam here");
+        isInvincible = true;
+        yield return new WaitForSecondsRealtime(onDamageCoolDown);
+        isInvincible = false;
+    }
+
+    public void StartEyeColorChange(Color startColor, Color endColor, float duration)
+    {
+
+        StartCoroutine(ChangeColorCoroutine(startColor, endColor, duration));
+
+    }
+    private IEnumerator ChangeColorCoroutine(Color startColor, Color endColor, float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            enemyEye.color = Color.Lerp(startColor, endColor, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        enemyEye.color = endColor;
+    }
+
+    public void DestroyMe()
+    {
+        Destroy(gameObject);
+    }
+
+
+    // Select a type fo missiles and fire.
+    public void Fire(Missiles missleType)
+    {
+        GameObject missileInstance;
+        InteractableProjectile missile;
+        switch (missleType)
+        {
+            case Missiles.HomingMissile:
+                missileInstance = Instantiate(HomingMisslePrefab, transform.position, transform.rotation);
+                missile = missileInstance.GetComponent<HomingMissile>();
+                if (missile is HomingMissile homing)
+                {
+                    homing.target = target;
+                    homing.moveSpeed = missileSpeed;
+                    homing.turnSpeed = missileTurnSpeed;
+                    homing.lifeTime = missileLifeTime;
+                    homing.originator = gameObject;
+                }
+                break;
+            case Missiles.TimePauseMissile:
+                missileInstance = Instantiate(TimePauseMissilePrefab, transform.position, transform.rotation);
+                missile = missileInstance.GetComponent<TimePauseMissile>();
+                if (missile is TimePauseMissile timePauseMissile)
+                {
+                    timePauseMissile.target = target;
+                    timePauseMissile.moveSpeed = missileSpeed;
+                    timePauseMissile.turnSpeed = missileTurnSpeed;
+                    timePauseMissile.lifeTime = missileLifeTime;
+                    timePauseMissile.originator = gameObject;
+                }
+                break;
+            default:
+                missileInstance = Instantiate(HomingMisslePrefab, transform.position, transform.rotation);
+                missile = missileInstance.GetComponent<HomingMissile>();
+                if (missile is HomingMissile homing_default)
+                {
+                    homing_default.target = target;
+                    homing_default.moveSpeed = missileSpeed;
+                    homing_default.turnSpeed = missileTurnSpeed;
+                    homing_default.lifeTime = missileLifeTime;
+                    homing_default.originator = gameObject;
+                }
+                break;
+        } 
+    }
+
+    //public void basicMissileSetting(InteractableProjectile missile)
+    //{
+    //}
+
+
+    //public void changeMisslePrefab()
+    //{
+
+    //}
 }

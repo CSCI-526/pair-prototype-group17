@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 1683370814826021868}
   - component: {fileID: 1576438468677305739}
   - component: {fileID: 6795108198901562744}
-  - component: {fileID: 1230222634273057179}
+  - component: {fileID: 654046767563402665}
   - component: {fileID: 3808373804485914538}
   m_Layer: 15
-  m_Name: TimePauseMissle
+  m_Name: TimePauseMissile
   m_TagString: Bullets
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -148,7 +148,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.2597593, y: 0.05254078}
+  m_Offset: {x: 0.24473765, y: 0.034816444}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -159,9 +159,9 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.7960408, y: 5.7285223}
+  m_Size: {x: 1.5141892, y: 1.6875559}
   m_EdgeRadius: 0
---- !u!114 &1230222634273057179
+--- !u!114 &654046767563402665
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -170,15 +170,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 2854665775201114038}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d12c42eacc6219e47b4627d28e8f67e6, type: 3}
+  m_Script: {fileID: 11500000, guid: 999a9859cb1ab4249aa479e3b621146a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   originator: {fileID: 4075494245998924318, guid: a1148f39b00aba041adcfbd85354249c, type: 3}
   missileState: 0
-  moveSpeed: 5
+  moveSpeed: 10
   turnSpeed: 130
   onHitPauseDuration: 0
-  target: {fileID: 3614151293785239385, guid: 66b10245d9cb3514798e676e46dee90d, type: 3}
+  target: {fileID: 0}
   lifeTime: 100
 --- !u!114 &3808373804485914538
 MonoBehaviour:

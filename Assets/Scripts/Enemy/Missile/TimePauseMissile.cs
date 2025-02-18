@@ -1,3 +1,9 @@
+//using Cinemachine;
+//using System.Collections;
+//using System.Collections.Generic;
+//using System.Linq;
+//using UnityEngine;
+
 using Cinemachine;
 using System;
 using System.Collections;
@@ -5,9 +11,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.InputSystem.LowLevel;
 
-public class TimePauseMissle : InteractableProjectile
+public class TimePauseMissile : InteractableProjectile
 {
     public enum MissileState
     {
@@ -30,13 +37,14 @@ public class TimePauseMissle : InteractableProjectile
     private CinemachineImpulseSource impulseSource;
     //private TimeManager timeManager;
     private bool isTimeStopped = false;
- 
+
     private static bool isTestingJumpKey = false;
     private static bool isTestingParryKey = false;
     private static bool isJumpKeyTested = false;
     private static bool isParryKeyTested = false;
 
     private static int counter = 0;
+    private int number = 0;
     //private 
 
     // Start is called before the first frame update
@@ -49,13 +57,14 @@ public class TimePauseMissle : InteractableProjectile
         missileState = MissileState.TrackingTarget;
         lifeTimer = lifeTime;
         rb.gravityScale = 0;
+        number = ++counter;
 
         if (typeof(Player) != null) player = target.GetComponent<Player>();
     }
 
     //public void StopAndRequestPressingJumpKey()
     //{
-    //    // If time is not stopped and the timePauseMissle is in the area of parry, stop time!
+    //    // If time is not stopped and the timePauseMissile is in the area of parry, stop time!
     //    if (!isTimeStopped && IsInTheAreaOfJumpping() && counter % 2 == 0)
     //    {
     //        TimeManager.instance.ToggleTimeStop();
@@ -70,22 +79,42 @@ public class TimePauseMissle : InteractableProjectile
     //    }
     //}
 
+    public bool IsInTheBox(Vector2 centerOffset, float boxHeight, float boxWidth)
+    {
+        Vector2 boxCenter = (Vector2)target.transform.position + centerOffset;
+        Vector2 boxTopLeftCorner = boxCenter - new Vector2(boxWidth / 2, -boxHeight / 2);
+        Vector2 boxBottomRightCorner = boxCenter + new Vector2(boxWidth / 2, -boxHeight / 2);
+        Collider2D[] colliders = Physics2D.OverlapAreaAll(boxTopLeftCorner, boxBottomRightCorner, player.canBeJumpParried);
+        return colliders.Contains(GetComponent<Collider2D>());
+    }
+
     public void StopAndReuqestPressingXXXKey(KeyCode key, Vector2 centerOffset, float boxHeight, float boxWidth)
     {
-        // If time is not stopped and the timePauseMissle is in the area of parry, stop time!
+        if (missileState != MissileState.TrackingTarget) return;
+        // If time is not stopped and the timePauseMissile is in the area of parry, stop time!
         if (!isTimeStopped && IsInTheBox(centerOffset, boxHeight, boxWidth))
         {
             Debug.Log("Stop time.");
+            Debug.Log($"MissileStateBef: {missileState.ToString()}");
             TimeManager.instance.ToggleTimeStop();
             isTimeStopped = !isTimeStopped;
-            //counter++;
+            if (key == KeyCode.Space) isTestingJumpKey = true;
+            else if (key == KeyCode.J) isTestingParryKey = true;
         }
         // If time is stopped and the Jump key is pressed, resume time.
         if (isTimeStopped && Input.GetKeyDown(key))
         {
             Debug.Log("Resume time.");
+            Debug.Log($"MissileStateAft: {missileState.ToString()}");
             TimeManager.instance.ToggleTimeStop();
             isTimeStopped = !isTimeStopped;
+            if (key == KeyCode.Space)
+            {
+                isJumpKeyTested = true;
+            }
+            else if (key == KeyCode.J) { 
+                isParryKeyTested = true;
+            }
         }
     }
 
@@ -94,15 +123,14 @@ public class TimePauseMissle : InteractableProjectile
     void Update()
     {
         //StopAndRequestPressingJumpKey();
-
+        Debug.Log($"counter: {counter}");
         // Toss two Time Pause Missiles to test Jump Key and Parry Key.
-        if (counter == 0)
+        if (number == 1)
         {
             Debug.Log($"isTestingJumpKey: {isTestingJumpKey}");
             Debug.Log($"isJumpKeyTested: {isJumpKeyTested}");
             if (!isTestingJumpKey)
             {
-                isTestingJumpKey = true;
                 StopAndReuqestPressingXXXKey(KeyCode.Space, player.jumpBoxCenterOffset, player.jumpBoxHeight, player.jumpBoxWidth);
             }
             else
@@ -110,18 +138,16 @@ public class TimePauseMissle : InteractableProjectile
                 if (!isJumpKeyTested)
                 {
                     StopAndReuqestPressingXXXKey(KeyCode.Space, player.jumpBoxCenterOffset, player.jumpBoxHeight, player.jumpBoxWidth);
-                    isJumpKeyTested = true;
                 }
             }
         }
-        if (counter == 1)
+        if (number == 2)
         {
             Debug.Log($"isTestingParryKey: {isTestingParryKey}");
             Debug.Log($"isParryKeyTested: {isParryKeyTested}");
             {
                 if (isJumpKeyTested && !isTestingParryKey)
                 {
-                    isTestingParryKey = true;
                     StopAndReuqestPressingXXXKey(KeyCode.J, player.attackBoxCenterOffset, player.attackBoxHeight, player.attackBoxWidth);
                 }
                 else if (isTestingParryKey)
@@ -129,7 +155,6 @@ public class TimePauseMissle : InteractableProjectile
                     if (!isParryKeyTested)
                     {
                         StopAndReuqestPressingXXXKey(KeyCode.J, player.attackBoxCenterOffset, player.attackBoxHeight, player.attackBoxWidth);
-                        isParryKeyTested = true;
                     }
                 }
             }
@@ -149,7 +174,6 @@ public class TimePauseMissle : InteractableProjectile
             case MissileState.DisFunctioned:
                 SetColor(Color.gray);
                 DisableMovement();
-                counter++;
                 break;
         }
 
@@ -247,15 +271,4 @@ public class TimePauseMissle : InteractableProjectile
 
     //    return colliders.Contains(GetComponent<Collider2D>());
     //}
-
-    public bool IsInTheBox(Vector2 centerOffset, float boxHeight, float boxWidth)
-    {
-        Vector2 boxCenter = (Vector2) target.transform.position + centerOffset;
-        Vector2 boxTopLeftCorner = boxCenter - new Vector2(boxWidth / 2, -boxHeight / 2);
-        Vector2 boxBottomRightCorner = boxCenter + new Vector2(boxWidth / 2, -boxHeight / 2);
-        Collider2D[] colliders = Physics2D.OverlapAreaAll(boxTopLeftCorner, boxBottomRightCorner, player.canBeJumpParried);
-        return colliders.Contains(GetComponent<Collider2D>());
-    }
-
-
 }
