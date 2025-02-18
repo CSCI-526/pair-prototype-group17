@@ -106,9 +106,8 @@ public class LongRangeAttackEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        faceTarget();
         stateMachine.currentState.Update();
-
 
         if (isInvincible)
         {
@@ -130,9 +129,9 @@ public class LongRangeAttackEnemy : MonoBehaviour
     public bool IsWallDetected()
     {
 
-        bool topCheck = Physics2D.Raycast(wallCheck.position, Vector2.right * facingDir, wallCheckDistance, whatIsWall);
+        bool topCheck1 = Physics2D.Raycast(wallCheck.position, Vector2.right * facingDir, wallCheckDistance, whatIsWall);
         //bool bottomCheck = Physics2D.Raycast(wallCheckBottom.position, Vector2.right * facingDir, wallCheckDistance, whatIsWall);
-        return topCheck;
+        return topCheck1;
     }
     private void OnDrawGizmos()
     {
@@ -162,9 +161,6 @@ public class LongRangeAttackEnemy : MonoBehaviour
             Gizmos.DrawWireSphere(this.transform.position, detectionCircleRadius);
             Gizmos.DrawWireSphere(this.transform.position, escapeCircleRadius);
         }
-
-
-
         //Gizmos.DrawWireCube((Vector2)transform.position + attackBoxCenterOffset, new Vector3(attackBoxWidth, attackBoxHeight,  0));
     }
 
@@ -323,6 +319,18 @@ public class LongRangeAttackEnemy : MonoBehaviour
                 }
                 break;
         } 
+    }
+
+    public void faceTarget()
+    {
+        if (target.transform.position.x > transform.position.x && !facingRight)
+        {
+            Flip();
+        }
+        else if (target.transform.position.x < transform.position.x && facingRight)
+        {
+            Flip();
+        }
     }
 
     //public void basicMissileSetting(InteractableProjectile missile)

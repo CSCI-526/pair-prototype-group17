@@ -173,9 +173,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 999a9859cb1ab4249aa479e3b621146a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originator: {fileID: 4075494245998924318, guid: a1148f39b00aba041adcfbd85354249c, type: 3}
+  originator: {fileID: 0}
   missileState: 0
-  moveSpeed: 10
+  moveSpeed: 25
   turnSpeed: 130
   onHitPauseDuration: 0
   target: {fileID: 0}

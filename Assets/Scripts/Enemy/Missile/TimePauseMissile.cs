@@ -45,6 +45,7 @@ public class TimePauseMissile : InteractableProjectile
 
     private static int counter = 0;
     private int number = 0;
+    private bool visited = false;
     //private 
 
     // Start is called before the first frame update
@@ -98,8 +99,8 @@ public class TimePauseMissile : InteractableProjectile
             Debug.Log($"MissileStateBef: {missileState.ToString()}");
             TimeManager.instance.ToggleTimeStop();
             isTimeStopped = !isTimeStopped;
-            if (key == KeyCode.Space) isTestingJumpKey = true;
-            else if (key == KeyCode.J) isTestingParryKey = true;
+            if (key == KeyCode.Space) { isTestingJumpKey = true; }
+            else if (key == KeyCode.J) { isTestingParryKey = true; }
         }
         // If time is stopped and the Jump key is pressed, resume time.
         if (isTimeStopped && Input.GetKeyDown(key))
@@ -203,6 +204,26 @@ public class TimePauseMissile : InteractableProjectile
         {
             rb.angularVelocity = 0;
         }
+
+        //float crossProductTest = Vector3.Cross(transform.right, (target.transform.position - transform.position).normalized).z;
+        //// I did not normalized self to target vector since I want missile to be less accurrate when it is close to player, and avoid sqrt
+        //if (crossProductTest > 0.2f)
+        //{
+        //    rb.angularVelocity = turnSpeed;
+        //}
+        //else if (crossProductTest < -0.2f)
+        //{
+        //    rb.angularVelocity = -turnSpeed;
+        //}
+        //else
+        //{
+        //    rb.angularVelocity = 0;
+        //}
+        //float maxTurnSpeed = 200f;
+        //rb.angularVelocity = Mathf.Clamp(crossProductTest * turnSpeed, -maxTurnSpeed, maxTurnSpeed);
+
+
+        //rb.velocity = transform.right * moveSpeed;
     }
 
     public void TrackBack()
