@@ -33,6 +33,7 @@ public class A1PreCastState : WeaponState
             weapon.curveDoneSwitch = false;
             stateTimer = pauseTime;
             pauseTimerStarted = true;
+            weapon.enemy.enemyEye.color = Color.red;
 
 
         }

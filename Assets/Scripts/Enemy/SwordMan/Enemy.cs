@@ -14,7 +14,7 @@ public class Enemy : MonoBehaviour
     public int health;
     public bool isVulnerable;
     [Header("PlayerDetection")]
-    public GameObject player;
+    public Player player;
     public SpriteRenderer enemyPrototypeSprite;
     public SpriteRenderer enemyEye;
     public float playerDetectionRangeX;
@@ -248,5 +248,43 @@ public class Enemy : MonoBehaviour
     public void OnDestroy()
     {
         MyLevelManager.instance.ResetCurrentScene();
+    }
+    
+
+    private IEnumerator EyeFlashCoroutine(Color startColor, Color endColor, float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            enemyEye.color = Color.Lerp(startColor, endColor, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        enemyEye.color = endColor;
+
+        elapsed = 0f;
+        while (elapsed < duration)
+        {
+            
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        
+
+        elapsed = 0f;
+        while (elapsed < duration)
+        {
+            enemyEye.color = Color.Lerp(endColor, startColor, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        enemyEye.color = startColor;
+    }
+
+    public void EyeFlash(Color startColor, Color endColor, float duration)
+    {
+
+        StartCoroutine(EyeFlashCoroutine(startColor, endColor, duration));
+
     }
 }

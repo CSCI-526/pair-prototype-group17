@@ -9,13 +9,15 @@ public class EnemyHealth : MonoBehaviour
     public Image healthBar;
     public float health;
     public float maxHealth = 100.0f;
-    public GameObject enemy;
+    public Enemy enemy;
     public Vector3 offset = new Vector3(0.0f, 2.0f, 0.0f); //
     
     void Start()
     {
-        healthBar.rectTransform.anchoredPosition = offset + enemy.transform.position;
+        enemy = GetComponent<Enemy>();
+        //healthBar.rectTransform.anchoredPosition = offset + enemy.transform.position;
         health = maxHealth;
+        //enemy = GetComponent<Enemy>();
 
     }
 
@@ -23,7 +25,7 @@ public class EnemyHealth : MonoBehaviour
     void Update()
     {
         UpdateHealthBar();
-        healthBar.rectTransform.anchoredPosition = offset+enemy.transform.position;
+        //healthBar.rectTransform.anchoredPosition = offset+enemy.transform.position;
         
     }
     public void Damage(float damageAmount)
@@ -36,6 +38,7 @@ public class EnemyHealth : MonoBehaviour
     }
     void UpdateHealthBar()
     {
+        health = enemy.health;
         healthBar.fillAmount = Mathf.Clamp(health / maxHealth, 0, 1);
         //ChangeHealthBarColor();
     }

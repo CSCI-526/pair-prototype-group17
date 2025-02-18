@@ -152,6 +152,7 @@ public class Player : MonoBehaviour
         //anim = GetComponentInChildren<Animator>(); // set in inspector
         Application.targetFrameRate = frameRate;
         //InitCamera();
+        //vCam.m_Lens.OrthographicSize = 13;
         //StartCoroutine(nameof(SetCameraSizeDelay));
         rb = GetComponent<Rigidbody2D>();
         isDamaged = false;
@@ -183,6 +184,10 @@ public class Player : MonoBehaviour
         {
             input.SetAttackBufferTimer();
         }
+        //if (Input.GetKeyDown(KeyCode.O))
+        //{
+        //    TimeManager.instance.PauseUntilJPressed();
+        //}
 
         // global timers before state update
         rollTimer -= Time.deltaTime;

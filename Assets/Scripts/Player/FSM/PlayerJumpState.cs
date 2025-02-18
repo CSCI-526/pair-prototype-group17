@@ -91,10 +91,16 @@ public class PlayerJumpState : PlayerState
         foreach (var hit in colliders)
         {
             InteractableProjectile missile = hit.GetComponent<InteractableProjectile>();
+            Arrow arrow = hit.GetComponent<Arrow>();
             if (missile != null)
             {
                 missile.DisableMovement();
                 isParried = true;
+            }
+
+            if (arrow != null)
+            {
+                arrow.OnJumpParry();
             }
         }
 

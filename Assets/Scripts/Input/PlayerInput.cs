@@ -85,4 +85,5 @@ public class PlayerInput : MonoBehaviour
         // Re-enable gameplay inputs once the new scene is fully loaded
         EnableGamePlayInputs();
     }
+
 }

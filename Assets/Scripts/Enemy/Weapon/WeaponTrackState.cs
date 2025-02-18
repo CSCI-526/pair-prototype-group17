@@ -19,7 +19,7 @@ public class WeaponTrackState : WeaponState
         weapon.canBeParried = true;
         weapon.transform.up = Vector2.right * weapon.enemy.facingDir;
         weapon.enemy.ForceMove(-2f);
-        stateTimer = 7f;
+        stateTimer = 4f;
         //stateTimer = 1f;
     }
     public override void Exit()

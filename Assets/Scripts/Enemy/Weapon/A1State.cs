@@ -38,6 +38,7 @@ public class A1State : WeaponState
             weapon.canDoDamage = false;
             weapon.canBeParried = false;
             weapon.enemy.isInvincible = false;
+            weapon.enemy.enemyEye.color = new Color(123 / 255f, 25 / 255f, 40 / 255f);
 
 
 

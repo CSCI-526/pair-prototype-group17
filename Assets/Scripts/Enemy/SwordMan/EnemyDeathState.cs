@@ -11,6 +11,7 @@ public class EnemyDeathState : EnemyState
     public override void Enter()
     {
         base.Enter();
+        enemy.health = 0;
         enemy.rb.constraints &= ~RigidbodyConstraints2D.FreezeRotation;
         enemy.rb.velocity = Vector3.zero;
         enemy.rb.gravityScale = 3;

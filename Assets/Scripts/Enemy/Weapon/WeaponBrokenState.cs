@@ -17,6 +17,7 @@ public class WeaponBrokenState : WeaponState
         //weapon.transform.SetParent(null, false);
         rb.velocity = new Vector2(rb.velocity.x * 0.2f, 0);
         rb.gravityScale = 3;
+        stateTimer = 3; // destory after 3 seconds
     }
     public override void Exit()
     {
@@ -28,7 +29,6 @@ public class WeaponBrokenState : WeaponState
     }
     public override void Update()
     {
-        // we don't use the base class update due to color conflict
-        stateTimer -= Time.deltaTime;
+        base.Update();
     }
 }

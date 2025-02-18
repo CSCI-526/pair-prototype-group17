@@ -62,4 +62,28 @@ public class TimeManager : MonoBehaviour
     {
         Time.timeScale = scale;
     }
+
+    public void PauseUntilJPressed()
+    {
+        StartCoroutine(nameof(PauseUntilJPressedCoroutine));
+    }
+
+    IEnumerator PauseUntilJPressedCoroutine()
+    {
+        Time.timeScale = 0;
+        yield return new WaitUntil(() => PlayerInput.instance.Attack);
+        Time.timeScale = 1.0f;
+    }
+
+    public void PauseUntilSpacePressed()
+    {
+        StartCoroutine(nameof(PauseUntilSpacePressedCoroutine));
+    }
+
+    IEnumerator PauseUntilSpacePressedCoroutine()
+    {
+        Time.timeScale = 0;
+        yield return new WaitUntil(() => PlayerInput.instance.Jump);
+        Time.timeScale = 1.0f;
+    }
 }

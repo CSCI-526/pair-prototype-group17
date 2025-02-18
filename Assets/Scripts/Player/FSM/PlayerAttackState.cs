@@ -104,11 +104,20 @@ public class PlayerAttackState : PlayerState
         foreach (var hit in colliders)
         {
             InteractableProjectile missile = hit.GetComponent<InteractableProjectile>();
+            Arrow arrow = hit.GetComponent<Arrow>();
             if (missile != null)
             {
                 missile.TrackBackOriginator();
                 isParried = true;
-                player.canDoDamage = false;
+                //player.canDoDamage = false;
+            }
+            if (arrow != null)
+            {
+                
+                    arrow.OnParry();
+                    
+                
+                //player.canDoDamage = false;
             }
         }
         

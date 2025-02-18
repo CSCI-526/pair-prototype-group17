@@ -140,7 +140,7 @@ public class Weapon : MonoBehaviour
     public void TrackBackOriginator()
     {
         
-        Vector3 targetDir = enemy.player.transform.position - transform.position;
+        Vector3 targetDir = enemy.transform.position - transform.position;
         if (Vector3.Dot(enemy.player.transform.right, targetDir) < 0)
         {
             transform.up = enemy.player.transform.right;

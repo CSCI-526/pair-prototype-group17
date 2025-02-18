@@ -13,7 +13,7 @@ public class Entity : MonoBehaviour
     public int health;
 
     [Header("PlayerDetection")] // range for enemy to see player, is displayed in gizmo, check OnDrawGizmos()
-    public GameObject player;// need to drag player from inspector
+    public Player player;// need to drag player from inspector
     public SpriteRenderer enemyPrototypeSprite;// need to drag player from inspector
     public SpriteRenderer enemyEye;// need to drag player from inspector
     public float playerDetectionRangeX;
@@ -24,7 +24,9 @@ public class Entity : MonoBehaviour
     public float attackRangeX;
     public float attackRangeY;
     public bool showAttackBox;
-    
+    public float attackCoolDown;
+    public bool canAttack;
+
 
     [Header("Movement")]
     public bool facingRight = true;
@@ -40,13 +42,13 @@ public class Entity : MonoBehaviour
     public LayerMask whatIsWall;
 
     #region States
-    public EntityStateMachine stateMachine { get; private set; }
+    //public EntityStateMachine stateMachine { get; private set; }
     //public ExampleEntityState idleState { get; private set; } // you still need to write you own state template
     #endregion
 
     public virtual void Awake()
     {
-        stateMachine = new EntityStateMachine();
+        //stateMachine = new EntityStateMachine();
         //idleState = new ExampleEntityIdleState(this, stateMachine, "Idle");
     }
     public virtual void Start()
@@ -54,13 +56,14 @@ public class Entity : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         impulseSource = GetComponent<CinemachineImpulseSource>();
         health = 100;
+        canAttack = true;
         //stateMachine.Initialize(idleState);// must be the last line in Start if your idle state enter function uses any pointers declared here.
     }
 
     // Update is called once per frame
     public virtual void Update()
     {
-        stateMachine.currentState.Update();
+        //stateMachine.currentState.Update();
     }
 
     public virtual bool IsGroundDetected()
@@ -87,7 +90,7 @@ public class Entity : MonoBehaviour
             Gizmos.DrawWireCube(new Vector2(transform.position.x, transform.position.y), new Vector3(playerDetectionRangeX, playerDetectionRangeY, 0));
 
         }
-        if (showDetectionBox)
+        if (showAttackBox)
         {
 
             Gizmos.DrawWireCube(new Vector2(transform.position.x, transform.position.y), new Vector3(attackRangeX, attackRangeY, 0));
@@ -140,6 +143,23 @@ public class Entity : MonoBehaviour
         bool playerInRange = distX <= playerDetectionRangeX / 2 && distY <= playerDetectionRangeY / 2;
         bool playerInAttackRange = distX <= attackRangeX / 2 && distY <= attackRangeY / 2;
         return (playerInRange, playerInAttackRange);
+    }
+
+    public void HitPauseAndCameraShake()
+    {
+        CameraShakeManager.instance.CameraShake(impulseSource);
+        TimeManager.instance.SlowTime(0.07f, 0.1f);
+    }
+    public void SetAttackCoolDown()
+    {
+        StopCoroutine(nameof(SetCoolDownCoroutine));
+        StartCoroutine(nameof(SetCoolDownCoroutine));
+    }
+    IEnumerator SetCoolDownCoroutine()
+    {
+        canAttack = false;
+        yield return new WaitForSeconds(attackCoolDown);
+        canAttack = true;
     }
 
 }
