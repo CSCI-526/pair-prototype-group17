@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 public class Player : MonoBehaviour
 {
     public PlayerInput input;
-
+    public CinemachineVirtualCamera vCam;
     [Header("Stats")]
     public SpriteRenderer playerPrototypeSprite;
     public float invincibleTimer;
@@ -142,12 +142,17 @@ public class Player : MonoBehaviour
         onDamageState = new PlayerOnDamageState(this, stateMachine, "OnDamage");
 
         input = GetComponent<PlayerInput>();
+        //InitCamera();
+        //StartCoroutine(nameof(SetCameraSizeDelay));
+
     }
 
     private void Start()
     {
         //anim = GetComponentInChildren<Animator>(); // set in inspector
         Application.targetFrameRate = frameRate;
+        //InitCamera();
+        //StartCoroutine(nameof(SetCameraSizeDelay));
         rb = GetComponent<Rigidbody2D>();
         isDamaged = false;
         input.EnableGamePlayInputs();
@@ -156,8 +161,10 @@ public class Player : MonoBehaviour
         playerHealthUI = GetComponent<PlayerHealth>();
         stateMachine.Initialize(idleState);
         
-       
-        
+
+
+
+
     }
 
     private void Update()
@@ -183,6 +190,8 @@ public class Player : MonoBehaviour
         attackTimer -= Time.deltaTime;
         invincibleTimer -= Time.deltaTime;
 
+
+
         // state update
         stateMachine.currentState.Update();
 
@@ -204,6 +213,11 @@ public class Player : MonoBehaviour
             }
         }
         playerHealthUI.health = health;
+
+        if (transform.position.y < -20)
+        {
+            MyLevelManager.instance.ResetCurrentScene();
+        }
         
         
 
@@ -323,6 +337,25 @@ public class Player : MonoBehaviour
     public Vector2 GetBounds()
     {
         return playerPrototypeSprite.bounds.size;
+    }
+
+    public void InitCamera()
+    {
+        var camera = Camera.main;
+        var brain = (camera == null) ? null : camera.GetComponent<CinemachineBrain>();
+        var vcam = (brain == null) ? null : brain.ActiveVirtualCamera as CinemachineVirtualCamera;
+        if (vcam != null) { 
+            vCam = vcam;
+        }
+        //vCam.m_Lens.OrthographicSize = 20;
+
+    }
+
+    IEnumerator SetCameraSizeDelay()
+    {
+        vCam.m_Lens.OrthographicSize = 20;
+        yield return new WaitForSeconds(1);
+        vCam.m_Lens.OrthographicSize = 10;
     }
 
 }

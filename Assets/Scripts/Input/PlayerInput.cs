@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerInput : MonoBehaviour
 {
@@ -77,5 +78,11 @@ public class PlayerInput : MonoBehaviour
         isAttackBuffered = true;
         yield return attackBufferTime;
         isAttackBuffered = false;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Re-enable gameplay inputs once the new scene is fully loaded
+        EnableGamePlayInputs();
     }
 }
