@@ -9,7 +9,7 @@ public class EnemyHealth : MonoBehaviour
     public Image healthBar;
     public float health;
     public float maxHealth = 100.0f;
-    public Enemy enemy;
+    public GameObject enemy;
     public Vector3 offset = new Vector3(0.0f, 2.0f, 0.0f); //
     
     void Start()

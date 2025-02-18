@@ -170,6 +170,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420033}
+  - component: {fileID: 519420034}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -285,6 +286,18 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &519420034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0dec8564166247e7be23fc8770e2f45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &544161747
 GameObject:
   m_ObjectHideFlags: 0
@@ -1010,19 +1023,8 @@ MonoBehaviour:
   healthBar: {fileID: 1293909759}
   health: 0
   maxHealth: 100
-  enemy: {fileID: 1500805435}
+  enemy: {fileID: 1500805427}
   offset: {x: 0, y: 2, z: 0}
---- !u!114 &1500805435 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2787167497887329470, guid: e646bc19563c13a4d9d712e5f80b2472, type: 3}
-  m_PrefabInstance: {fileID: 1500805426}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1500805427}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7352f6fd919d0b4b9f3fc2079882759, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1526907426
 GameObject:
   m_ObjectHideFlags: 0
