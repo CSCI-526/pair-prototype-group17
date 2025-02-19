@@ -38,6 +38,8 @@ public class TimePauseMissile : InteractableProjectile
     //private TimeManager timeManager;
     private bool isTimeStopped = false;
 
+    public float timeStopDetectionBoxOffset = 0.1f; 
+
     private static bool isTestingJumpKey = false;
     private static bool isTestingParryKey = false;
     private static bool isJumpKeyTested = false;
@@ -45,7 +47,9 @@ public class TimePauseMissile : InteractableProjectile
 
     private static int counter = 0;
     private int number = 0;
-    private bool visited = false;
+    //private bool isSpaceKeyDisabled = false;
+    //private bool isJKeyDisabled = true;
+
     //private 
 
     // Start is called before the first frame update
@@ -82,9 +86,14 @@ public class TimePauseMissile : InteractableProjectile
 
     public bool IsInTheBox(Vector2 centerOffset, float boxHeight, float boxWidth)
     {
+        
         Vector2 boxCenter = (Vector2)target.transform.position + centerOffset;
         Vector2 boxTopLeftCorner = boxCenter - new Vector2(boxWidth / 2, -boxHeight / 2);
         Vector2 boxBottomRightCorner = boxCenter + new Vector2(boxWidth / 2, -boxHeight / 2);
+        //Debug.Log($">boxTopLeftCorner: {boxTopLeftCorner.ToString()}; boxBottomRightCorner:{boxBottomRightCorner.ToString()}.");
+        boxTopLeftCorner += new Vector2(timeStopDetectionBoxOffset, -timeStopDetectionBoxOffset);
+        boxBottomRightCorner += new Vector2(-timeStopDetectionBoxOffset, timeStopDetectionBoxOffset);
+        //Debug.Log($"<boxTopLeftCorner: {boxTopLeftCorner.ToString()}; boxBottomRightCorner:{boxBottomRightCorner.ToString()}.");
         Collider2D[] colliders = Physics2D.OverlapAreaAll(boxTopLeftCorner, boxBottomRightCorner, player.canBeJumpParried);
         return colliders.Contains(GetComponent<Collider2D>());
     }
@@ -100,7 +109,10 @@ public class TimePauseMissile : InteractableProjectile
             TimeManager.instance.ToggleTimeStop();
             isTimeStopped = !isTimeStopped;
             if (key == KeyCode.Space) { isTestingJumpKey = true; }
-            else if (key == KeyCode.J) { isTestingParryKey = true; }
+            else if (key == KeyCode.J) { 
+                isTestingParryKey = true; 
+                //isSpaceKeyDisabled = true;
+            }
         }
         // If time is stopped and the Jump key is pressed, resume time.
         if (isTimeStopped && Input.GetKeyDown(key))
@@ -112,9 +124,11 @@ public class TimePauseMissile : InteractableProjectile
             if (key == KeyCode.Space)
             {
                 isJumpKeyTested = true;
+                //isJKeyDisabled = false;
             }
             else if (key == KeyCode.J) { 
                 isParryKeyTested = true;
+                //isSpaceKeyDisabled = false;
             }
         }
     }
@@ -130,6 +144,9 @@ public class TimePauseMissile : InteractableProjectile
         {
             Debug.Log($"isTestingJumpKey: {isTestingJumpKey}");
             Debug.Log($"isJumpKeyTested: {isJumpKeyTested}");
+            //bool isPlayerInAirOrJumpStates = (player.stateMachine.currentState is PlayerAirState) || (player.stateMachine.currentState is PlayerJumpState);
+            //Debug.Log($"currentState: {player.stateMachine.currentState}");
+ 
             if (!isTestingJumpKey)
             {
                 StopAndReuqestPressingXXXKey(KeyCode.Space, player.jumpBoxCenterOffset, player.jumpBoxHeight, player.jumpBoxWidth);
@@ -184,6 +201,27 @@ public class TimePauseMissile : InteractableProjectile
             Destroy(gameObject);
         }
     }
+
+    //void OnGUI()
+    //{
+    //    Event e = Event.current;
+    //    if (isSpaceKeyDisabled)
+    //    {
+    //        if (e.isKey && e.keyCode == KeyCode.Space)
+    //        {
+    //            e.Use();
+    //            Debug.Log("Disable Space Key");
+    //        }
+    //    }
+    //    if (isJKeyDisabled)
+    //    {
+    //        if (e.isKey && e.keyCode == KeyCode.J)
+    //        {
+    //            e.Use();
+    //            Debug.Log("Disable J Key");
+    //        }
+    //    }
+    //}
 
     private void TrackTarget()
     {

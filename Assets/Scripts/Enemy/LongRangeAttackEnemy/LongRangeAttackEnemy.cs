@@ -42,7 +42,9 @@ public class LongRangeAttackEnemy : MonoBehaviour
     public float missileLifeTime;
     public GameObject TimePauseMissilePrefab;
     public GameObject HomingMisslePrefab;
+    public float fireRate = 7.0f;
     private int attack_counter = 0;
+
    
 
     [Header("OnDamage")]
@@ -113,10 +115,10 @@ public class LongRangeAttackEnemy : MonoBehaviour
         {
             enemyPrototypeSprite.color = Color.green;
         }
-        else
-        {
-            enemyPrototypeSprite.color = Color.yellow;
-        }
+        //else
+        //{
+        //    enemyPrototypeSprite.color = Color.yellow;
+        //}
 
     }
 
