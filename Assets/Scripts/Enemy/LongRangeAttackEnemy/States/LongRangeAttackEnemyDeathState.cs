@@ -11,8 +11,9 @@ public class LongRangeAttackEnemyDeathState : LongRangeAttackEnemyState
     public override void Enter()
     {
         base.Enter();
+        longRangeAttackEnemy.fallDown();
         longRangeAttackEnemy.rb.constraints &= ~RigidbodyConstraints2D.FreezeRotation;
-        longRangeAttackEnemy.rb.velocity = Vector3.zero;
+        longRangeAttackEnemy.rb.velocity = Vector2.zero;
         longRangeAttackEnemy.rb.gravityScale = 3;
         longRangeAttackEnemy.ForceMove(-2f);
         longRangeAttackEnemy.ForceJump(1f);

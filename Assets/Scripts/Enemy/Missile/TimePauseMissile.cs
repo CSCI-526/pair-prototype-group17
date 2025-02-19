@@ -10,8 +10,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 
 public class TimePauseMissile : InteractableProjectile
@@ -22,6 +25,7 @@ public class TimePauseMissile : InteractableProjectile
         TrackingBackOriginator,
         DisFunctioned
     }
+
     public GameObject originator;
     public MissileState missileState;
     public float moveSpeed;
@@ -36,19 +40,17 @@ public class TimePauseMissile : InteractableProjectile
     private SpriteRenderer missileTipRenderer;
     private CinemachineImpulseSource impulseSource;
     //private TimeManager timeManager;
-    private bool isTimeStopped = false;
-
-    public float timeStopDetectionBoxOffset = 0.1f; 
+    
 
     private static bool isTestingJumpKey = false;
     private static bool isTestingParryKey = false;
     private static bool isJumpKeyTested = false;
     private static bool isParryKeyTested = false;
 
-    private static int counter = 0;
+    private bool isTimeStopped = false;
+    public static int counter = 0;
     private int number = 0;
-    //private bool isSpaceKeyDisabled = false;
-    //private bool isJKeyDisabled = true;
+
 
     //private 
 
@@ -65,6 +67,42 @@ public class TimePauseMissile : InteractableProjectile
         number = ++counter;
 
         if (typeof(Player) != null) player = target.GetComponent<Player>();
+    }
+
+    public bool IsInTheBox(KeyCode key, Vector2 centerOffset, float boxHeight, float boxWidth)
+    {
+        Vector2 boxCenter = ((player.facingRight && key == KeyCode.J) || key == KeyCode.Space) ? (Vector2)target.transform.position + centerOffset : (Vector2)target.transform.position - centerOffset;
+        Vector2 boxTopLeftCorner = boxCenter - new Vector2(boxWidth / 2, -boxHeight / 2);
+        Vector2 boxBottomRightCorner = boxCenter + new Vector2(boxWidth / 2, -boxHeight / 2);
+        Collider2D[] colliders = Physics2D.OverlapAreaAll(boxTopLeftCorner, boxBottomRightCorner, player.canBeJumpParried);
+        return colliders.Contains(GetComponent<Collider2D>());
+    }
+
+    public void StopAndReuqestPressingXXXKey(KeyCode key, Vector2 centerOffset, float boxHeight, float boxWidth)
+    {
+        if (missileState != MissileState.TrackingTarget) return;
+        // If time is not stopped and the timePauseMissile is in the detection area, stop time!
+        if (!isTimeStopped && IsInTheBox(key, centerOffset, boxHeight, boxWidth))
+        {
+            Debug.Log("Stop time.");
+            Debug.Log($"MissileStateBef: {missileState.ToString()}");
+            TimeManager.instance.ToggleTimeStop();
+            isTimeStopped = !isTimeStopped;
+            if (key == KeyCode.Space) isTestingJumpKey = true;
+            else if (key == KeyCode.J) isTestingParryKey = true; 
+            
+        }
+        // If time is stopped and the key is pressed, resume time.
+        if (isTimeStopped && Input.GetKeyDown(key))
+        {
+            Debug.Log("Resume time.");
+            Debug.Log($"MissileStateAft: {missileState.ToString()}");
+            TimeManager.instance.ToggleTimeStop();
+            isTimeStopped = !isTimeStopped;
+            if (key == KeyCode.Space) isJumpKeyTested = true;
+            else if (key == KeyCode.J) isParryKeyTested = true;
+            
+        }
     }
 
     //public void StopAndRequestPressingJumpKey()
@@ -84,60 +122,9 @@ public class TimePauseMissile : InteractableProjectile
     //    }
     //}
 
-    public bool IsInTheBox(Vector2 centerOffset, float boxHeight, float boxWidth)
-    {
-        
-        Vector2 boxCenter = (Vector2)target.transform.position + centerOffset;
-        Vector2 boxTopLeftCorner = boxCenter - new Vector2(boxWidth / 2, -boxHeight / 2);
-        Vector2 boxBottomRightCorner = boxCenter + new Vector2(boxWidth / 2, -boxHeight / 2);
-        //Debug.Log($">boxTopLeftCorner: {boxTopLeftCorner.ToString()}; boxBottomRightCorner:{boxBottomRightCorner.ToString()}.");
-        boxTopLeftCorner += new Vector2(timeStopDetectionBoxOffset, -timeStopDetectionBoxOffset);
-        boxBottomRightCorner += new Vector2(-timeStopDetectionBoxOffset, timeStopDetectionBoxOffset);
-        //Debug.Log($"<boxTopLeftCorner: {boxTopLeftCorner.ToString()}; boxBottomRightCorner:{boxBottomRightCorner.ToString()}.");
-        Collider2D[] colliders = Physics2D.OverlapAreaAll(boxTopLeftCorner, boxBottomRightCorner, player.canBeJumpParried);
-        return colliders.Contains(GetComponent<Collider2D>());
-    }
-
-    public void StopAndReuqestPressingXXXKey(KeyCode key, Vector2 centerOffset, float boxHeight, float boxWidth)
-    {
-        if (missileState != MissileState.TrackingTarget) return;
-        // If time is not stopped and the timePauseMissile is in the area of parry, stop time!
-        if (!isTimeStopped && IsInTheBox(centerOffset, boxHeight, boxWidth))
-        {
-            Debug.Log("Stop time.");
-            Debug.Log($"MissileStateBef: {missileState.ToString()}");
-            TimeManager.instance.ToggleTimeStop();
-            isTimeStopped = !isTimeStopped;
-            if (key == KeyCode.Space) { isTestingJumpKey = true; }
-            else if (key == KeyCode.J) { 
-                isTestingParryKey = true; 
-                //isSpaceKeyDisabled = true;
-            }
-        }
-        // If time is stopped and the Jump key is pressed, resume time.
-        if (isTimeStopped && Input.GetKeyDown(key))
-        {
-            Debug.Log("Resume time.");
-            Debug.Log($"MissileStateAft: {missileState.ToString()}");
-            TimeManager.instance.ToggleTimeStop();
-            isTimeStopped = !isTimeStopped;
-            if (key == KeyCode.Space)
-            {
-                isJumpKeyTested = true;
-                //isJKeyDisabled = false;
-            }
-            else if (key == KeyCode.J) { 
-                isParryKeyTested = true;
-                //isSpaceKeyDisabled = false;
-            }
-        }
-    }
-
-
     // Update is called once per frame
     void Update()
     {
-        //StopAndRequestPressingJumpKey();
         Debug.Log($"counter: {counter}");
         // Toss two Time Pause Missiles to test Jump Key and Parry Key.
         if (number == 1)
@@ -146,7 +133,6 @@ public class TimePauseMissile : InteractableProjectile
             Debug.Log($"isJumpKeyTested: {isJumpKeyTested}");
             //bool isPlayerInAirOrJumpStates = (player.stateMachine.currentState is PlayerAirState) || (player.stateMachine.currentState is PlayerJumpState);
             //Debug.Log($"currentState: {player.stateMachine.currentState}");
- 
             if (!isTestingJumpKey)
             {
                 StopAndReuqestPressingXXXKey(KeyCode.Space, player.jumpBoxCenterOffset, player.jumpBoxHeight, player.jumpBoxWidth);
@@ -163,7 +149,6 @@ public class TimePauseMissile : InteractableProjectile
         {
             Debug.Log($"isTestingParryKey: {isTestingParryKey}");
             Debug.Log($"isParryKeyTested: {isParryKeyTested}");
-            {
                 if (isJumpKeyTested && !isTestingParryKey)
                 {
                     StopAndReuqestPressingXXXKey(KeyCode.J, player.attackBoxCenterOffset, player.attackBoxHeight, player.attackBoxWidth);
@@ -175,7 +160,6 @@ public class TimePauseMissile : InteractableProjectile
                         StopAndReuqestPressingXXXKey(KeyCode.J, player.attackBoxCenterOffset, player.attackBoxHeight, player.attackBoxWidth);
                     }
                 }
-            }
         }
 
         lifeTimer -= Time.deltaTime;
@@ -202,27 +186,6 @@ public class TimePauseMissile : InteractableProjectile
         }
     }
 
-    //void OnGUI()
-    //{
-    //    Event e = Event.current;
-    //    if (isSpaceKeyDisabled)
-    //    {
-    //        if (e.isKey && e.keyCode == KeyCode.Space)
-    //        {
-    //            e.Use();
-    //            Debug.Log("Disable Space Key");
-    //        }
-    //    }
-    //    if (isJKeyDisabled)
-    //    {
-    //        if (e.isKey && e.keyCode == KeyCode.J)
-    //        {
-    //            e.Use();
-    //            Debug.Log("Disable J Key");
-    //        }
-    //    }
-    //}
-
     private void TrackTarget()
     {
         rb.velocity = transform.right * moveSpeed;
@@ -242,33 +205,16 @@ public class TimePauseMissile : InteractableProjectile
         {
             rb.angularVelocity = 0;
         }
-
-        //float crossProductTest = Vector3.Cross(transform.right, (target.transform.position - transform.position).normalized).z;
-        //// I did not normalized self to target vector since I want missile to be less accurrate when it is close to player, and avoid sqrt
-        //if (crossProductTest > 0.2f)
-        //{
-        //    rb.angularVelocity = turnSpeed;
-        //}
-        //else if (crossProductTest < -0.2f)
-        //{
-        //    rb.angularVelocity = -turnSpeed;
-        //}
-        //else
-        //{
-        //    rb.angularVelocity = 0;
-        //}
-        //float maxTurnSpeed = 200f;
-        //rb.angularVelocity = Mathf.Clamp(crossProductTest * turnSpeed, -maxTurnSpeed, maxTurnSpeed);
-
-
-        //rb.velocity = transform.right * moveSpeed;
     }
 
     public void TrackBack()
     {
         rb.velocity = transform.right * moveSpeed;
         rb.angularVelocity = 0;
+        
     }
+
+    
 
     public override void DisableMovement()
     {
@@ -283,7 +229,32 @@ public class TimePauseMissile : InteractableProjectile
         //Destroy(gameObject, 1f);
     }
 
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (missileState == MissileState.TrackingBackOriginator)
+        {
+            GameObject otherObject = collision.gameObject;
+            if (otherObject == originator)
+            {
+                LongRangeAttackEnemy other = otherObject.GetComponent<LongRangeAttackEnemy>();
+                insertIntoGameObject(other.transform);
+                other.stateMachine.ChangeState(other.deathState);
+            }
+        }
+        
+    }
 
+    public void insertIntoGameObject(Transform gameObjectTransform)
+    {
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.velocity = Vector2.zero;
+            rb.isKinematic = true;
+        }
+        transform.position = gameObjectTransform.position;
+        //transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+    }
 
     public override void TrackBackOriginator()
     {
@@ -323,10 +294,10 @@ public class TimePauseMissile : InteractableProjectile
 
     //public bool IsInTheAreaOfParrying()
     //{
-    //    Vector2 attackBoxCenter = (Vector2)target.transform.position + target.attackBoxCenterOffset;
-    //    Vector2 attackBoxTopLeftCorner = jumpBoxCenter - new Vector2(target.jumpBoxWidth / 2, -target.attackBoxHeight / 2);
-    //    Vector2 attackBoxBottomRightCorner = jumpBoxCenter + new Vector2(target.jumpBoxWidth / 2, -target.attackBoxHeight / 2);
-    //    Collider2D[] colliders = Physics2D.OverlapAreaAll(jumpBoxTopLeftCorner, jumpBoxBottomRightCorner, target.canBeJumpParried);
+    //    Vector2 attackBoxCenter = ((player.facingRight) ? (Vector2)target.transform.position + player.attackBoxCenterOffset : (Vector2)player.transform.position - player.attackBoxCenterOffset;
+    //    Vector2 attackBoxTopLeftCorner = attackBoxCenter - new Vector2(player.attackBoxWidth / 2, -player.attackBoxHeight / 2);
+    //    Vector2 attackBoxBottomRightCorner = attackBoxCenter + new Vector2(player.attackBoxWidth / 2, -player.attackBoxHeight / 2);
+    //    Collider2D[] colliders = Physics2D.OverlapAreaAll(attackBoxTopLeftCorner, attackBoxBottomRightCorner, player.canBeJumpParried);
 
     //    return colliders.Contains(GetComponent<Collider2D>());
     //}

@@ -42,8 +42,8 @@ public class LongRangeAttackEnemy : MonoBehaviour
     public float missileLifeTime;
     public GameObject TimePauseMissilePrefab;
     public GameObject HomingMisslePrefab;
-    public float fireRate = 7.0f;
-    private int attack_counter = 0;
+    public float fireRate = 8.0f;
+    //private int attack_counter = 0;
 
    
 
@@ -234,7 +234,7 @@ public class LongRangeAttackEnemy : MonoBehaviour
             }
             else
             {
-                health -= 10;
+                health -= 100;
             }
         }
     }
@@ -333,6 +333,12 @@ public class LongRangeAttackEnemy : MonoBehaviour
         {
             Flip();
         }
+    }
+
+    public void fallDown()
+    {
+        rb.AddForce(Vector2.down * 500);
+        rb.AddTorque(100);
     }
 
     //public void basicMissileSetting(InteractableProjectile missile)

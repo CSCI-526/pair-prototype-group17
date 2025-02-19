@@ -79,7 +79,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 0, a: 1}
+  m_Color: {r: 0.54901963, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -175,12 +175,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originator: {fileID: 0}
   missileState: 0
-  moveSpeed: 25
+  moveSpeed: 30
   turnSpeed: 130
   onHitPauseDuration: 0
   target: {fileID: 0}
-  lifeTime: 100
-  timeStopDetectionBoxOffset: 0.2
+  lifeTime: 10
 --- !u!114 &3808373804485914538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -308,7 +307,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
-  m_Color: {r: 1, g: 1, b: 0, a: 1}
+  m_Color: {r: 0.5456797, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
