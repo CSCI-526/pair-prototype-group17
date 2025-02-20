@@ -13,7 +13,7 @@ public class CMVCAM : MonoBehaviour
         vCam = GetComponent<CinemachineVirtualCamera>();
 
         vCam.Follow = GameObject.FindGameObjectWithTag("Player").transform;
-        vCam.m_Lens.OrthographicSize = 13;
+        vCam.m_Lens.OrthographicSize = 15;
     }
 
     void Start()

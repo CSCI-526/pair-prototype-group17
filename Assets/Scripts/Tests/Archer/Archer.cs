@@ -14,6 +14,7 @@ public class Archer : Entity
     public ArcherStateMachine stateMachine { get; private set; }
     public ArcherState idleState { get; private set; }
     public ArcherState shootState { get; private set; }
+    public ArcherState deathState { get; private set; }
     #endregion
     public override void Awake()
     {
@@ -21,6 +22,7 @@ public class Archer : Entity
         stateMachine = new ArcherStateMachine();
         idleState = new ArcherIdleState(this, stateMachine);
         shootState = new ArcherShootState(this, stateMachine);
+        deathState = new ArcherDeathState(this, stateMachine);
 
     }
     public override void Start()
@@ -59,10 +61,20 @@ public class Archer : Entity
             
         }
     }
+    public override void OnHitByProjectile()
+    {
+        stateMachine.ChangeState(deathState);
+        
+    }
+
+    private void OnDestroy()
+    {
+        MyLevelManager.instance.LoadNextLevel();
+    }
 
 
 
-    
 
-    
+
+
 }

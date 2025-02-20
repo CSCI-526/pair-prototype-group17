@@ -30,6 +30,17 @@ public class ArrowTrackBackState : ArrowState
         
     }
 
+    public override void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            arrow.StuckInto(other);
+            arrow.HitPauseAndCameraShake();
+            stateMachine.ChangeState(arrow.stuckState);
+            return;
+        }
+    }
+
     // Start is called before the first frame update
 
 }

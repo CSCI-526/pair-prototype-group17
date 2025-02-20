@@ -162,4 +162,14 @@ public class Entity : MonoBehaviour
         canAttack = true;
     }
 
+    public virtual void OnHitByProjectile()
+    {
+        // call this when an enemy projectile is defected and land back on enemy
+    }
+
+    public virtual void DestroyMe(float delay)
+    {
+        Destroy(gameObject, delay);
+    }
+
 }

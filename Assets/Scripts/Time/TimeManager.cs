@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using TMPro;
 using UnityEngine;
 
 public class TimeManager : MonoBehaviour
@@ -12,12 +13,27 @@ public class TimeManager : MonoBehaviour
     public static TimeManager instance;
  
     private bool isStopped = false;
+    public TextMeshProUGUI attText;
+    public TextMeshProUGUI jmpText;
 
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
+        }
+
+    }
+    private void Start()
+    {
+        if (attText != null)
+        {
+            attText.gameObject.SetActive(false);
+        }
+        if (jmpText != null)
+        {
+
+            jmpText.gameObject.SetActive(false);
         }
     }
     public void SlowTime(float pauseDuration, float scale)
@@ -70,9 +86,17 @@ public class TimeManager : MonoBehaviour
 
     IEnumerator PauseUntilJPressedCoroutine()
     {
+        if (attText != null)
+        {
+            attText.gameObject.SetActive(true);
+        }
         Time.timeScale = 0;
         yield return new WaitUntil(() => PlayerInput.instance.Attack);
         Time.timeScale = 1.0f;
+        if (attText != null)
+        {
+            attText.gameObject.SetActive(false);
+        }
     }
 
     public void PauseUntilSpacePressed()
@@ -82,8 +106,18 @@ public class TimeManager : MonoBehaviour
 
     IEnumerator PauseUntilSpacePressedCoroutine()
     {
+        if (jmpText != null)
+        {
+
+            jmpText.gameObject.SetActive(true);
+        }
         Time.timeScale = 0;
         yield return new WaitUntil(() => PlayerInput.instance.Jump);
         Time.timeScale = 1.0f;
+        if (jmpText != null)
+        {
+
+            jmpText.gameObject.SetActive(false);
+        }
     }
 }

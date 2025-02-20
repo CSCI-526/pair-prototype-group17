@@ -30,5 +30,7 @@ public class WeaponBrokenState : WeaponState
     public override void Update()
     {
         base.Update();
+        weapon.SetColor(Color.gray);
+        
     }
 }

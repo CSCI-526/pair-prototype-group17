@@ -8,6 +8,7 @@ TagManager:
   - Weapon
   - PlayerAtkBox
   - PlayerJmpBox
+  - Enemy
   layers:
   - Default
   - TransparentFX

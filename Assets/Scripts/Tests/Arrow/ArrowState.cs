@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class ArrowState : MonoBehaviour
+public class ArrowState
 {
     // Start is called before the first frame update
     protected ArrowStateMachine stateMachine;
@@ -40,6 +41,10 @@ public class ArrowState : MonoBehaviour
 
     }
     public virtual void OnJumpParry()
+    {
+
+    }
+    public virtual void OnTriggerEnter2D(Collider2D other)
     {
 
     }

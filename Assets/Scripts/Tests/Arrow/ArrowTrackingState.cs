@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Arrow;
 
 public class ArrowTrackingState : ArrowState
 {
@@ -49,17 +50,35 @@ public class ArrowTrackingState : ArrowState
 
     public override void OnParry()
     {
-        CameraShakeManager.instance.CameraShake(arrow.impulseSource);
-        TimeManager.instance.SlowTime(0.07f, 0.1f);
+        arrow.HitPauseAndCameraShake();
         stateMachine.ChangeState(arrow.trackBackState);
         return;
     }
     public override void OnJumpParry()
     {
-        CameraShakeManager.instance.CameraShake(arrow.impulseSource);
-        TimeManager.instance.SlowTime(0.07f, 0.1f);
+        arrow.HitPauseAndCameraShake();
         stateMachine.ChangeState(arrow.disFunctionState);
         return;
     }
 
+    public override void OnTriggerEnter2D(Collider2D other)
+    {
+        switch (arrow.tutorial)
+        {
+            case TutorialType.None:
+                break;
+            case TutorialType.Attack:
+                if (other.CompareTag("PlayerAtkBox"))
+                {
+                    TimeManager.instance.PauseUntilJPressed();
+                }
+                break;
+            case TutorialType.Jump:
+                if (other.CompareTag("PlayerJmpBox"))
+                {
+                    TimeManager.instance.PauseUntilSpacePressed();
+                }
+                break;
+        }
+    }
 }

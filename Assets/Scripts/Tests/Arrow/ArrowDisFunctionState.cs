@@ -29,7 +29,7 @@ public class ArrowDisFunctionState : ArrowState
         base.Update();
         if (stateTimer < 0)
         {
-            arrow.DestroyMe();
+            arrow.DestroyMe(3);
         }
     }
 }

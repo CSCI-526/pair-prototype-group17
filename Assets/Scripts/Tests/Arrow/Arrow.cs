@@ -45,6 +45,7 @@ public class Arrow : MonoBehaviour
     public ArrowState trackingState { get; private set; }
     public ArrowState trackBackState { get; private set; } 
     public ArrowState disFunctionState { get; private set; }
+    public ArrowState stuckState { get; private set; }
 
     #endregion
     private void Awake()
@@ -53,6 +54,7 @@ public class Arrow : MonoBehaviour
         trackingState = new ArrowTrackingState(this, stateMachine);
         trackBackState = new ArrowTrackBackState(this, stateMachine);
         disFunctionState = new ArrowDisFunctionState(this, stateMachine);
+        stuckState = new ArrowStuckState(this,stateMachine);
 
 
        
@@ -127,9 +129,9 @@ public class Arrow : MonoBehaviour
         stateMachine.currentState.OnJumpParry();
     }
     
-    public void DestroyMe()
+    public void DestroyMe(float delay)
     {
-        Destroy(gameObject);
+        Destroy(gameObject,delay);
     }
 
     public void SetColor(Color color)
@@ -140,23 +142,8 @@ public class Arrow : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        switch (tutorial)
-        {
-            case TutorialType.None:
-                break;
-            case TutorialType.Attack:
-                if (other.CompareTag("PlayerAtkBox"))
-                {
-                    TimeManager.instance.PauseUntilJPressed();
-                }
-                break;
-            case TutorialType.Jump:
-                if (other.CompareTag("PlayerJmpBox"))
-                {
-                    TimeManager.instance.PauseUntilSpacePressed();
-                }
-                break;
-        }     
+        stateMachine.currentState.OnTriggerEnter2D(other);
+           
     }
 
     public void DestroyMeOnLifeOver()
@@ -168,4 +155,28 @@ public class Arrow : MonoBehaviour
         yield return new WaitForSeconds(lifeTime);
         Destroy(gameObject);
     }
+
+    public void StuckInto(Collider2D collision)
+    {
+        cldr.enabled = false;
+        rb.isKinematic = true;
+        rb.constraints = RigidbodyConstraints2D.FreezeAll;
+        transform.parent = collision.transform;
+    }
+
+    public void DestroyParentEntity()
+    {
+        Entity myParent = transform.parent.gameObject.GetComponent<Entity>();
+        if (myParent != null)
+        {
+            myParent.OnHitByProjectile();
+        }
+    }
+
+    public void HitPauseAndCameraShake()
+    {
+        CameraShakeManager.instance.CameraShake(impulseSource);
+        TimeManager.instance.SlowTime(0.07f, 0.1f);
+    }
+
 }

@@ -39,7 +39,7 @@ public class PlayerMoveState : PlayerGroundedState
         }
         else
         {
-            rb.velocity = new Vector2(Mathf.Clamp(rb.velocity.x, -player.moveSpeed, player.moveSpeed), rb.velocity.y);
+            
         }
 
         // animation logic
